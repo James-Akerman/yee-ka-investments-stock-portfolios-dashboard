@@ -386,7 +386,7 @@ def holders(ticker):
     table_dict = {heading_1:table_1, heading_2:table_2}
 
     stock_dict = {}
-    stock_dict['stock'] = 'CBA.AX'
+    stock_dict['stock'] = ticker
     stock_dict['information'] = table_dict
     # ##### Transform #####
 
