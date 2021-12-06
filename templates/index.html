@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Group 4 Project 2</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+  </head>
+  
+  <body>
+    <div class="container">
+      <h1>Summary Dashboard</h1>
+      <div class="row">
+        <div class="col-xs-12 col-md-12">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+          <h3 id="title">Add a stock</h3>
+          <div id="form-outer">
+            <p id="description">
+              add a new stock to the database
+            </p>
+            <form id="survey-form" method="POST" action="/stock">
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="stock-label" for="stock">Enter Stock Ticker </label>
+                </div>
+                <div class="rightTab">
+                  <input autofocus type="text" name="stock" id="stock" class="input-field" placeholder="Enter your name" required>
+                </div>
+              </div>
+              <button id="submit" type="submit">Submit</button>
+              <button id="reset" type="reset">Reset</button>
+            </form>
+          </div>
+          <div id="form-outer">
+            <h3 id="title">Portfolio</h3>
+            <p id="description">
+              To get the portfolio
+            </p>
+            <form id="survey-form" method="POST" action="/portfolio">
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="name-label" for="name">Enter Client Name </label>
+                </div>
+                <div class="rightTab">
+                  <input autofocus type="text" name="name" id="name" class="input-field" placeholder="Enter your name" required>
+                </div>
+              </div>
+              
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
+                </div>
+                <div class="rightTab">
+                  <input type="text" name="ticker" id="ticker" class="input-field" placeholder="CBA.AX" required>
+                </div>
+              </div>
+        
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="quantity-label" for="quantity">Enter Quantity </label>
+                </div>
+                <div class="rightTab">
+                  <input type="number" name="quantity" id="quantity" class="input-field" min=0 placeholder="40" required>
+                </div>
+              </div>
+        
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="price-label" for="price">Enter the Price in $AU </label>
+                </div>
+                <div class="rightTab">
+                  <input type="number" step="0.001" name="price" id="price" class="input-field" min=0 placeholder="50.25" required>
+                </div>
+              </div>
+              
+              <button id="submit" type="submit">Submit</button>
+              <button id="reset" type="reset">Reset</button>
+            </form>
+          </div>
+        </div>
+
+
+        <div class="col-xs-10 col-sm-10 col-md-10 col-l-10 col-xl-10">
+          <div id="scatter">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12  col-md-9">
+          <div id="stock_history">
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Footer-->
+    <div id="footer">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <script src="{{ url_for('static', filename='require.js') }}"></script>
+    <script src="{{ url_for('static', filename='logic.js') }}"></script>
+  </body>
+
+</html>

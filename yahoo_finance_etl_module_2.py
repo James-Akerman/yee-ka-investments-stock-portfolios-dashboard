@@ -81,11 +81,11 @@ def financial_sheets_etl(ticker, sheet):
     
     if(sheet=='balance-sheet'):
         
-        client.shares.balance_sheets.update_one({'stock':stock}, newvalues, True)
+        client.Stocks.balance_sheets.update_one({'stock':stock}, newvalues, True)
     elif(sheet=='financials'):
-        client.shares.income_statements.update_one({'stock':stock}, newvalues, True)
+        client.Stocks.income_statements.update_one({'stock':stock}, newvalues, True)
     else:
-        client.shares.cash_flow_statements.update_one({'stock':stock}, newvalues, True)
+        client.Stocks.cash_flow_statements.update_one({'stock':stock}, newvalues, True)
     ##### Load #####
     
 def summary_info(ticker): 
@@ -141,7 +141,7 @@ def summary_info(ticker):
     
     newvalues = { "$set": {'information':stock_dict['information']} }
     
-    client.shares.summary.update_one({'stock':stock}, newvalues, True)
+    client.Stocks.summary.update_one({'stock':stock}, newvalues, True)
 
     ##### Load #####
     
@@ -229,7 +229,7 @@ def stock_history_average(ticker):
     client = pymongo.MongoClient(conn)
     # Update the information in the document if the stock is found, else insert a new document for the stock
     newvalues = { "$set": {'information':stock_dict['information']} }
-    client.shares.stock_history_average.update_one({'stock':stock}, newvalues, True)
+    client.Stocks.stock_history_average.update_one({'stock':stock}, newvalues, True)
     
 def stock_history(ticker):   
     ##### Extract #####
@@ -303,7 +303,7 @@ def stock_history(ticker):
     client = pymongo.MongoClient(conn)
     # Update the information in the document if the stock is found, else insert a new document for the stock
     newvalues = { "$set": {'information':stock_dict['information']} }
-    client.shares.stock_history.update_one({'stock':stock}, newvalues, True)
+    client.Stocks.stock_history.update_one({'stock':stock}, newvalues, True)
     
 def statistics(ticker):    
     ##### Extract #####
@@ -352,7 +352,7 @@ def statistics(ticker):
     conn = 'mongodb://localhost:27017'
     client = pymongo.MongoClient(conn)
     newvalues = { "$set": {'information':stock_dict['information']} }
-    client.shares.statistics.update_one({'stock':stock}, newvalues, True)
+    client.Stocks.statistics.update_one({'stock':stock}, newvalues, True)
     
 def holders(ticker):
     ##### Extract #####
@@ -395,7 +395,7 @@ def holders(ticker):
     client = pymongo.MongoClient(conn)
   
     newvalues = { "$set": {'information':stock_dict['information']} }  
-    client.shares.holders.update_one({'stock':stock}, newvalues, True)
+    client.Stocks.holders.update_one({'stock':stock}, newvalues, True)
     ##### Load #####
 
 
