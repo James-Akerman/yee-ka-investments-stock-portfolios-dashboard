@@ -17,18 +17,29 @@
       </div>
       <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+          <h3 id="title">Add a Client</h3>
+          <div id="form-outer">
+            <form id="survey-form" method="POST" action="/client">
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="client-name-label" for="stock">Enter client name </label>
+                </div>
+                <div class="rightTab">
+                  <input autofocus type="text" name="client-name" id="client-name" class="input-field" placeholder="e.g. James" required>
+                </div>
+              </div>
+              <button id="submit" type="submit">Submit</button>
+            </form>
+          </div>
           <h3 id="title">Add a stock</h3>
           <div id="form-outer">
-            <p id="description">
-              add a new stock to the database
-            </p>
             <form id="survey-form" method="POST" action="/stock">
               <div class="rowTab">
                 <div class="labels">
                   <label id="stock-label" for="stock">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <input autofocus type="text" name="stock" id="stock" class="input-field" placeholder="Enter your name" required>
+                  <input autofocus type="text" name="stock" id="stock" class="input-field" placeholder="e.g. CBA.AX" required>
                 </div>
               </div>
               <button id="submit" type="submit">Submit</button>
@@ -37,16 +48,19 @@
           </div>
           <div id="form-outer">
             <h3 id="title">Portfolio</h3>
-            <p id="description">
-              To get the portfolio
-            </p>
             <form id="survey-form" method="POST" action="/portfolio">
+
               <div class="rowTab">
                 <div class="labels">
                   <label id="name-label" for="name">Enter Client Name </label>
                 </div>
                 <div class="rightTab">
-                  <input autofocus type="text" name="name" id="name" class="input-field" placeholder="Enter your name" required>
+                  <!-- <input autofocus type="text" name="name" id="name" class="input-field" placeholder="Enter your name" required> -->
+                  <select name="name" id="name">
+                    {% for x in names_list %}
+                    <option value="{{x}}">{{x}}</option>
+                    {% endfor %}
+                </select>
                 </div>
               </div>
               
@@ -55,7 +69,11 @@
                   <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <input type="text" name="ticker" id="ticker" class="input-field" placeholder="CBA.AX" required>
+                  <select name="ticker" id="ticker">
+                    {% for x in stock_list %}
+                    <option value="{{x}}">{{x}}</option>
+                    {% endfor %}
+                </select>
                 </div>
               </div>
         
@@ -64,7 +82,7 @@
                   <label id="quantity-label" for="quantity">Enter Quantity </label>
                 </div>
                 <div class="rightTab">
-                  <input type="number" name="quantity" id="quantity" class="input-field" min=0 placeholder="40" required>
+                  <input type="number" name="quantity" id="quantity" class="input-field" step="1" min=0 placeholder="40" required>
                 </div>
               </div>
         
@@ -85,7 +103,7 @@
 
 
         <div class="col-xs-10 col-sm-10 col-md-10 col-l-10 col-xl-10">
-          <div id="scatter">
+          <div id="hori">
           </div>
         </div>
       </div>
@@ -103,7 +121,6 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
-    <script src="{{ url_for('static', filename='require.js') }}"></script>
     <script src="{{ url_for('static', filename='logic.js') }}"></script>
   </body>
 
