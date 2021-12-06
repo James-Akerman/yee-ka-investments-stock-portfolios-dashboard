@@ -17,9 +17,9 @@
       </div>
       <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
-          <h3 id="title">Add a Client</h3>
-          <div id="form-outer">
-            <form id="survey-form" method="POST" action="/client">
+          <h4>Enter Client and Stock Data</h4>
+          <div id="client-form-outer">
+            <form id="client-form" method="POST" action="/client">
               <div class="rowTab">
                 <div class="labels">
                   <label id="client-name-label" for="stock">Enter client name </label>
@@ -31,9 +31,9 @@
               <button id="submit" type="submit">Submit</button>
             </form>
           </div>
-          <h3 id="title">Add a stock</h3>
-          <div id="form-outer">
-            <form id="survey-form" method="POST" action="/stock">
+
+          <div id="stock-form-outer">
+            <form id="stock-form" method="POST" action="/stock">
               <div class="rowTab">
                 <div class="labels">
                   <label id="stock-label" for="stock">Enter Stock Ticker </label>
@@ -46,16 +46,24 @@
               <button id="reset" type="reset">Reset</button>
             </form>
           </div>
-          <div id="form-outer">
-            <h3 id="title">Portfolio</h3>
-            <form id="survey-form" method="POST" action="/portfolio">
 
+          <div id="update-stock-form-outer">
+            <label id="update-label" for="update-stock-form">Get the Latest Stock Data</label>
+            <form id="update-stock-form" method="POST" action="/update_all_stocks">
+              <button id="submit" type="submit">Update All</button>
+            </form>
+          </div>
+
+          <br>
+
+          <div id="porfolio-form-outer">
+            <form id="porfolio-form" method="POST" action="/portfolio">
+              <h4>Create a Portfolio Entry</h4>
               <div class="rowTab">
                 <div class="labels">
                   <label id="name-label" for="name">Enter Client Name </label>
                 </div>
                 <div class="rightTab">
-                  <!-- <input autofocus type="text" name="name" id="name" class="input-field" placeholder="Enter your name" required> -->
                   <select name="name" id="name">
                     {% for x in names_list %}
                     <option value="{{x}}">{{x}}</option>

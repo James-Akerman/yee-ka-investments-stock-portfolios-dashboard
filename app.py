@@ -28,19 +28,36 @@ def home():
     names = []
     for document in client_collection.find():
         names.append(document['name'])
+    
 
     return render_template("index.html",stock_list=stocks, names_list = names)
 
+# ADD A CIENT
 @app.route('/client', methods=["GET", "POST"])
-# Add clients to mongoDB
 def personal_information():
     if request.method == "POST":
        client_collection.insert_one({'name': request.form['client-name']})
 
     return redirect("/")
 
+# GET STOCKS
+@app.route('/stock', methods=["GET", "POST"])
+def get_stock_data():
+    # Load the data
+    stock_history(request.form['stock'])
+    # Redirect back to home page
+    return redirect("/")
 
-# route to get data from html form and insert data into database
+# UPDATE ALL THE DATA
+@app.route('/update_all_stocks', methods=["GET", "POST"])
+def update_all_stock_data():
+    # Load the data
+    for document in stock_history_collection.find():
+            stock_history(document['stock'])
+    # Redirect back to home page
+    return redirect("/")
+
+# CREATE PORTFOLIO DATA
 @app.route('/portfolio', methods=["GET", "POST"])
 def data():
     if request.method == "POST":
@@ -64,15 +81,6 @@ def data():
 
         dbPortfolio[name].update_one({'ticker': ticker}, newvalues, True)
 
-    return redirect("/")
-
-
-# Route that will trigger the scrape function
-@app.route('/stock', methods=["GET", "POST"])
-def get_stock_data():
-    # Load the data
-    stock_history(request.form['stock'])
-    # Redirect back to home page
     return redirect("/")
 
 
