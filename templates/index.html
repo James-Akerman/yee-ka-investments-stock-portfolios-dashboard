@@ -17,6 +17,16 @@
       </div>
       <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+
+          <div id="sample-dataset-form-outer">
+            <label id="sample-dataset-label" for="sample-dataset-form">Import Sample Dataset</label>
+            <form id="sample-dataset-form" method="POST" action="/sample_dataset">
+              <button id="submit" type="submit">Import Data</button>
+            </form>
+          </div>
+
+          <br>
+
           <h4>Enter Client and Stock Data</h4>
           <div id="client-form-outer">
             <form id="client-form" method="POST" action="/client">

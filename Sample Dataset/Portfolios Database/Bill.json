@@ -1,0 +1,28 @@
+[{
+  "ticker": "CBA.AX",
+  "change_in_value": 362,
+  "current_price": 97.24,
+  "current_value": 4862,
+  "owner": "Bill",
+  "purchase_price": 90,
+  "purchase_value": 4500,
+  "quantity": 50
+},{
+  "ticker": "WPL.AX",
+  "change_in_value": -396.9,
+  "current_price": 21.52,
+  "current_value": 968.4,
+  "owner": "Bill",
+  "purchase_price": 30.34,
+  "purchase_value": 1365.3,
+  "quantity": 45
+},{
+  "ticker": "XRO.AX",
+  "change_in_value": 965.5,
+  "current_price": 140.04,
+  "current_value": 7002,
+  "owner": "Bill",
+  "purchase_price": 120.73,
+  "purchase_value": 6036.5,
+  "quantity": 50
+}]

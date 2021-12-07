@@ -3,14 +3,14 @@ from flask import Flask, render_template, redirect
 from yahoo_finance_etl_module_2 import stock_history
 from flask import Flask, request, render_template
 from pymongo import MongoClient
+import json
+
 # define the mongodb client
 client = MongoClient(port=27017)
 
 # define the databases and collections to use
 dbPortfolio = client.Portfolios
-
 stock_history_collection = client.Stocks.stock_history
-
 client_collection = client.Clients.personal_information
 
 
@@ -31,6 +31,40 @@ def home():
     
 
     return render_template("index.html",stock_list=stocks, names_list = names)
+
+# GET SAMPLE DATASET
+@app.route('/sample_dataset', methods=["GET", "POST"])
+def get_sample_dataset():
+
+    # Insert Client Database data
+    with open('Sample Dataset/Clients Database/personal_information.json') as file:
+        file_data = json.load(file)
+    client_collection.insert_many(file_data)
+
+    # Insert Portfolio Database data
+    with open('Sample Dataset/Portfolios Database/Bill.json') as file:
+        file_data = json.load(file)
+    dbPortfolio.Bill.insert_many(file_data)
+    # Insert Portfolio Database data
+    with open('Sample Dataset/Portfolios Database/Kate.json') as file:
+        file_data = json.load(file)
+    dbPortfolio.Kate.insert_many(file_data)
+    # Insert Portfolio Database data
+    with open('Sample Dataset/Portfolios Database/Sarah.json') as file:
+        file_data = json.load(file)
+    dbPortfolio.Sarah.insert_many(file_data)
+    # Insert Portfolio Database data
+    with open('Sample Dataset/Portfolios Database/Sam.json') as file:
+        file_data = json.load(file)
+    dbPortfolio.Sam.insert_many(file_data)
+
+    # Insert Stock Database data
+    with open('Sample Dataset/Stocks Database/stock_history.json') as file:
+        file_data = json.load(file)
+    stock_history_collection.insert_many(file_data)
+
+  # Redirect back to home page
+    return redirect("/")
 
 # ADD A CIENT
 @app.route('/client', methods=["GET", "POST"])

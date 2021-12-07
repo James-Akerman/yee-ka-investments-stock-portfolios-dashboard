@@ -1,0 +1,28 @@
+[{
+  "ticker": "WOW.AX",
+  "change_in_value": 778,
+  "current_price": 40.61,
+  "current_value": 4061,
+  "owner": "Sam",
+  "purchase_price": 32.83,
+  "purchase_value": 3283,
+  "quantity": 100
+},{
+  "ticker": "CSL.AX",
+  "change_in_value": 387.8,
+  "current_price": 296.29,
+  "current_value": 20740.3,
+  "owner": "Sam",
+  "purchase_price": 290.75,
+  "purchase_value": 20352.5,
+  "quantity": 70
+},{
+  "ticker": "XRO.AX",
+  "change_in_value": -1169.3,
+  "current_price": 140.04,
+  "current_value": 15404.4,
+  "owner": "Sam",
+  "purchase_price": 150.67,
+  "purchase_value": 16573.7,
+  "quantity": 110
+}]

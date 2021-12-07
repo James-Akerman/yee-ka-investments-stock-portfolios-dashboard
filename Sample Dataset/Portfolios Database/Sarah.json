@@ -1,0 +1,28 @@
+[{
+  "ticker": "NAB.AX",
+  "change_in_value": 348.75,
+  "current_price": 28.04,
+  "current_value": 1261.8,
+  "owner": "Sarah",
+  "purchase_price": 20.29,
+  "purchase_value": 913.05,
+  "quantity": 45
+},{
+  "ticker": "CBA.AX",
+  "change_in_value": -766.8,
+  "current_price": 97.24,
+  "current_value": 5834.4,
+  "owner": "Sarah",
+  "purchase_price": 110.02,
+  "purchase_value": 6601.2,
+  "quantity": 60
+},{
+  "ticker": "WES.AX",
+  "change_in_value": 174.5,
+  "current_price": 58.87,
+  "current_value": 2943.5,
+  "owner": "Sarah",
+  "purchase_price": 55.38,
+  "purchase_value": 2769,
+  "quantity": 50
+}]
