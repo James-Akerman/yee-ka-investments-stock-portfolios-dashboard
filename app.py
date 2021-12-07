@@ -74,6 +74,27 @@ def personal_information():
 
     return redirect("/")
 
+# DELETE ALL DATA
+@app.route('/delete_all_data', methods=["GET", "POST"])
+def delete_all_data():
+    client.drop_database('Clients')
+    client.drop_database('Portfolios')
+    client.drop_database('Stocks')
+
+    # Redirect back to home page
+    return redirect("/")
+
+# DELETE A PORTFOLIO ENTRY
+@app.route('/delete-portfolio', methods=["GET", "POST"])
+def delete_entry():
+    if request.method == "POST":
+        name = request.form.get('name')
+        ticker = request.form.get('ticker')
+
+        dbPortfolio[name].delete_one({'ticker': ticker})
+
+    return redirect("/")
+
 # GET STOCKS
 @app.route('/stock', methods=["GET", "POST"])
 def get_stock_data():
@@ -95,8 +116,6 @@ def update_all_stock_data():
 @app.route('/portfolio', methods=["GET", "POST"])
 def data():
     if request.method == "POST":
-        # Variables
-        # name = request.form['name']
         name = request.form.get('name')
         ticker = request.form.get('ticker')
         quantity = int(request.form['quantity'])

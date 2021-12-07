@@ -12,16 +12,21 @@
     <div class="container">
       <h1>Summary Dashboard</h1>
       <div class="row">
-        <div class="col-xs-12 col-md-12">
-        </div>
-      </div>
-      <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
 
           <div id="sample-dataset-form-outer">
             <label id="sample-dataset-label" for="sample-dataset-form">Import Sample Dataset</label>
             <form id="sample-dataset-form" method="POST" action="/sample_dataset">
               <button id="submit" type="submit">Import Data</button>
+            </form>
+          </div>
+
+          <br>
+
+          <div id="delete-dataset-form-outer">
+            <label id="delete-dataset-label" for="sample-dataset-form">Delete All Data</label>
+            <form id="delete-dataset-form" method="POST" action="/delete_all_data">
+              <button id="submit" type="submit">Delete All Data</button>
             </form>
           </div>
 
@@ -117,6 +122,42 @@
               <button id="reset" type="reset">Reset</button>
             </form>
           </div>
+
+          <br>
+
+          <div id="porfolio-delete-form-outer">
+            <form id="porfolio-delete-form" method="POST" action="/delete-portfolio">
+              <h4>Delete a Portfolio Entry</h4>
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="name-label" for="name">Enter Client Name </label>
+                </div>
+                <div class="rightTab">
+                  <select name="name" id="name">
+                    {% for x in names_list %}
+                    <option value="{{x}}">{{x}}</option>
+                    {% endfor %}
+                </select>
+                </div>
+              </div>
+              
+              <div class="rowTab">
+                <div class="labels">
+                  <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
+                </div>
+                <div class="rightTab">
+                  <select name="ticker" id="ticker">
+                    {% for x in stock_list %}
+                    <option value="{{x}}">{{x}}</option>
+                    {% endfor %}
+                </select>
+                </div>
+              </div>
+              
+              <button id="submit" type="submit">Delete</button>
+            </form>
+          </div>
+
         </div>
 
 
@@ -124,7 +165,9 @@
           <div id="hori">
           </div>
         </div>
+
       </div>
+
       <div class="row">
         <div class="col-xs-12  col-md-9">
           <div id="stock_history">
