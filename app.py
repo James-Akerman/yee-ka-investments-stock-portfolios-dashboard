@@ -85,6 +85,7 @@ def json_portfolios():
         for document in dbPortfolio[name].find():
             individual_portfolio.append(document)
         portfolios[name] = individual_portfolio
+    # portfolios = [portfolios]
     return json.dumps(portfolios,default=json_util.default)
 
 
