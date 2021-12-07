@@ -4,6 +4,7 @@ from yahoo_finance_etl_module_2 import stock_history
 from flask import Flask, request, render_template
 from pymongo import MongoClient
 import json
+from bson import json_util
 
 # define the mongodb client
 client = MongoClient(port=27017)
@@ -24,11 +25,9 @@ def home():
     stocks = []
     for document in stock_history_collection.find():
         stocks.append(document['stock'])
-
     names = []
     for document in client_collection.find():
         names.append(document['name'])
-    
 
     return render_template("index.html",stock_list=stocks, names_list = names)
 
@@ -62,17 +61,40 @@ def get_sample_dataset():
     with open('Sample Dataset/Stocks Database/stock_history.json') as file:
         file_data = json.load(file)
     stock_history_collection.insert_many(file_data)
-
   # Redirect back to home page
     return redirect("/")
+
+# RETURN JSON FILES
+@app.route("/json_stock_history")
+def json_stock_history():
+    # Load the data
+    stocks = []
+    json_response = stock_history_collection.find()
+    for document in json_response:
+            stocks.append(document)
+    # return json.dumps(stocks[0],default=str)
+    return json.dumps(stocks,default=json_util.default)
+
+@app.route("/json_portfolios")
+def json_portfolios():
+    # Load the data
+    portfolios = {}
+    portfolio_names = dbPortfolio.collection_names()
+    for name in portfolio_names:
+        individual_portfolio = []
+        for document in dbPortfolio[name].find():
+            individual_portfolio.append(document)
+        portfolios[name] = individual_portfolio
+    return json.dumps(portfolios,default=json_util.default)
+
 
 # ADD A CIENT
 @app.route('/client', methods=["GET", "POST"])
 def personal_information():
     if request.method == "POST":
        client_collection.insert_one({'name': request.form['client-name']})
-
     return redirect("/")
+
 
 # DELETE ALL DATA
 @app.route('/delete_all_data', methods=["GET", "POST"])
@@ -80,7 +102,6 @@ def delete_all_data():
     client.drop_database('Clients')
     client.drop_database('Portfolios')
     client.drop_database('Stocks')
-
     # Redirect back to home page
     return redirect("/")
 
@@ -90,9 +111,7 @@ def delete_entry():
     if request.method == "POST":
         name = request.form.get('name')
         ticker = request.form.get('ticker')
-
         dbPortfolio[name].delete_one({'ticker': ticker})
-
     return redirect("/")
 
 # GET STOCKS
@@ -120,20 +139,19 @@ def data():
         ticker = request.form.get('ticker')
         quantity = int(request.form['quantity'])
         purchase_price = float(request.form['price'])
-
         purchase_value = round(purchase_price * quantity,3)
         last_stock_record = stock_history_collection.find({'stock': ticker})
         last_stock_price = list(last_stock_record[0]['information'].values())[0]['Close*']
         last_stock_price - float(last_stock_price)
         current_value = round(quantity * last_stock_price,3)
         value_change = round(current_value - purchase_value,3)
-
+        
         newvalues = {"$set": {'quantity': quantity, 'purchase_price': purchase_price, 
                             'purchase_value': purchase_value, 'current_price':last_stock_price, 
-                            'current_value': current_value, 'change_in_value': value_change, 'owner': name}}
+                            'current_value': current_value, 'change_in_value': value_change,
+                            'owner': name}}
 
         dbPortfolio[name].update_one({'ticker': ticker}, newvalues, True)
-
     return redirect("/")
 
 
