@@ -9,15 +9,23 @@
   </head>
   
   <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light text-center">
+      <a class="navbar-brand" href="#">Yeh Kah Investments</a>
+      </div>
+    </nav>
+
+    <h1>Summary Dashboard</h1>
+
+
     <div class="container">
-      <h1>Summary Dashboard</h1>
+      
       <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
 
           <div id="sample-dataset-form-outer">
             <label id="sample-dataset-label" for="sample-dataset-form">Import Sample Dataset</label>
             <form id="sample-dataset-form" method="POST" action="/sample_dataset">
-              <button id="submit" type="submit">Import Data</button>
+              <button id="submit" type="submit" class="btn btn-primary" >Import Data</button>
             </form>
           </div>
 
@@ -26,7 +34,7 @@
           <div id="delete-dataset-form-outer">
             <label id="delete-dataset-label" for="sample-dataset-form">Delete All Data</label>
             <form id="delete-dataset-form" method="POST" action="/delete_all_data">
-              <button id="submit" type="submit">Delete All Data</button>
+              <button id="submit" type="submit" class="btn btn-danger">Delete All Data</button>
             </form>
           </div>
 
@@ -43,7 +51,7 @@
                   <input autofocus type="text" name="client-name" id="client-name" class="input-field" placeholder="e.g. James" required>
                 </div>
               </div>
-              <button id="submit" type="submit">Submit</button>
+              <button id="submit" type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
 
@@ -57,15 +65,15 @@
                   <input autofocus type="text" name="stock" id="stock" class="input-field" placeholder="e.g. CBA.AX" required>
                 </div>
               </div>
-              <button id="submit" type="submit">Submit</button>
-              <button id="reset" type="reset">Reset</button>
+              <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+              <button id="reset" type="reset" class="btn btn-warning">Reset</button>
             </form>
           </div>
 
           <div id="update-stock-form-outer">
             <label id="update-label" for="update-stock-form">Get the Latest Stock Data</label>
             <form id="update-stock-form" method="POST" action="/update_all_stocks">
-              <button id="submit" type="submit">Update All</button>
+              <button id="submit" type="submit" class="btn btn-warning">Update All</button>
             </form>
           </div>
 
@@ -79,7 +87,7 @@
                   <label id="name-label" for="name">Enter Client Name </label>
                 </div>
                 <div class="rightTab">
-                  <select name="name" id="name">
+                  <select name="name" id="name" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
                     {% for x in names_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -92,7 +100,7 @@
                   <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <select name="ticker" id="ticker">
+                  <select name="ticker" id="ticker" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
                     {% for x in stock_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -118,8 +126,8 @@
                 </div>
               </div>
               
-              <button id="submit" type="submit">Submit</button>
-              <button id="reset" type="reset">Reset</button>
+              <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+              <button id="reset" type="reset" class="btn btn-warning">Reset</button>
             </form>
           </div>
 
@@ -133,7 +141,7 @@
                   <label id="name-label" for="name">Enter Client Name </label>
                 </div>
                 <div class="rightTab">
-                  <select name="name" id="name">
+                  <select name="name" id="name" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
                     {% for x in names_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -146,7 +154,7 @@
                   <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <select name="ticker" id="ticker">
+                  <select name="ticker" id="ticker" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
                     {% for x in stock_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -154,7 +162,7 @@
                 </div>
               </div>
               
-              <button id="submit" type="submit">Delete</button>
+              <button id="submit" type="submit" class="btn btn-danger">Delete</button>
             </form>
           </div>
 

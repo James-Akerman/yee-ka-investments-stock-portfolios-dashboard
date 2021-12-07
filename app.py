@@ -72,7 +72,6 @@ def json_stock_history():
     json_response = stock_history_collection.find()
     for document in json_response:
             stocks.append(document)
-    # return json.dumps(stocks[0],default=str)
     return json.dumps(stocks,default=json_util.default)
 
 @app.route("/json_portfolios")
@@ -85,7 +84,7 @@ def json_portfolios():
         for document in dbPortfolio[name].find():
             individual_portfolio.append(document)
         portfolios[name] = individual_portfolio
-    # portfolios = [portfolios]
+
     return json.dumps(portfolios,default=json_util.default)
 
 
@@ -125,12 +124,33 @@ def get_stock_data():
 
 # UPDATE ALL THE DATA
 @app.route('/update_all_stocks', methods=["GET", "POST"])
-def update_all_stock_data():
-    # Load the data
+def update_all__data():
+    # Update all the stock data
     for document in stock_history_collection.find():
             stock_history(document['stock'])
+
+    # Update all the portfolio data
+    portfolio_names = dbPortfolio.collection_names()
+    for name in portfolio_names:
+        for document in dbPortfolio[name].find():
+            ticker = document["ticker"]
+            purchase_value = document["purchase_value"]
+            purchase_price = document["purchase_price"]
+            quantity = document['quantity']
+            last_stock_record = stock_history_collection.find({'stock': ticker})
+            last_stock_price = list(last_stock_record[0]['information'].values())[0]['Close*']
+            current_value = round(quantity * last_stock_price,3)
+            value_change = round(current_value - purchase_value,3)
+
+            newvalues = {"$set": {'quantity': quantity, 'purchase_price': purchase_price, 
+                            'purchase_value': purchase_value, 'current_price':last_stock_price, 
+                            'current_value': current_value, 'change_in_value': value_change,
+                            'owner': name}}
+            dbPortfolio[name].update_one({'ticker': ticker}, newvalues, True)
+
     # Redirect back to home page
     return redirect("/")
+
 
 # CREATE PORTFOLIO DATA
 @app.route('/portfolio', methods=["GET", "POST"])
@@ -141,9 +161,10 @@ def data():
         quantity = int(request.form['quantity'])
         purchase_price = float(request.form['price'])
         purchase_value = round(purchase_price * quantity,3)
+
         last_stock_record = stock_history_collection.find({'stock': ticker})
         last_stock_price = list(last_stock_record[0]['information'].values())[0]['Close*']
-        last_stock_price - float(last_stock_price)
+        last_stock_price = float(last_stock_price)
         current_value = round(quantity * last_stock_price,3)
         value_change = round(current_value - purchase_value,3)
         
