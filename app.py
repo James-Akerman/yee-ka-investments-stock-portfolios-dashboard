@@ -29,7 +29,9 @@ def home():
     for document in client_collection.find():
         names.append(document['name'])
 
-    return render_template("index.html",stock_list=stocks, names_list = names)
+    collection_names = dbPortfolio.list_collection_names()
+
+    return render_template("index.html",stock_list=stocks, names_list = names, portfolio_names = collection_names)
 
 # GET SAMPLE DATASET
 @app.route('/sample_dataset', methods=["GET", "POST"])

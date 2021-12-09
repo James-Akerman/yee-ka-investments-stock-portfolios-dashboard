@@ -4,20 +4,47 @@
     <meta charset="UTF-8">
     <title>Group 4 Project 2</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
   </head>
   
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light text-center">
-      <a class="navbar-brand" href="#">Yeh Kah Investments</a>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container-fluid text-center">
+        <h1 class="display-5">Summary Dashboard</h1>
       </div>
-    </nav>
-
-    <h1>Summary Dashboard</h1>
-
+    </div>
 
     <div class="container">
+      <div class="row">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+          <h5>Total Assets Managed:</h5>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2" >
+          <p id="total_assets"></p>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+          <h5>Today's gain/loss:</h5>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2" id="gainloss">
+          <p>Insert result here</p>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+          <h5>Select Client</h5>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
+          <div class="rightTab">
+            <select name="portfolio_filter" id="portfolio_filter" class="form-select" aria-label=".form-select example">
+              {% for x in portfolio_names %}
+              <option value="{{x}}">{{x}}</option>
+              {% endfor %}
+              <option value="reset">Reset</option>
+          </select>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <br>
       
       <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
@@ -48,7 +75,7 @@
                   <label id="client-name-label" for="stock">Enter client name </label>
                 </div>
                 <div class="rightTab">
-                  <input autofocus type="text" name="client-name" id="client-name" class="input-field" placeholder="e.g. James" required>
+                  <input autofocus type="text" name="client-name" id="client-name" class="form-control" placeholder="e.g. James" required>
                 </div>
               </div>
               <button id="submit" type="submit" class="btn btn-primary">Submit</button>
@@ -62,7 +89,7 @@
                   <label id="stock-label" for="stock">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <input autofocus type="text" name="stock" id="stock" class="input-field" placeholder="e.g. CBA.AX" required>
+                  <input autofocus type="text" name="stock" id="stock" class="form-control" placeholder="e.g. CBA.AX" required>
                 </div>
               </div>
               <button id="submit" type="submit" class="btn btn-primary">Submit</button>
@@ -87,7 +114,7 @@
                   <label id="name-label" for="name">Enter Client Name </label>
                 </div>
                 <div class="rightTab">
-                  <select name="name" id="name" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
+                  <select name="name" id="name" class="form-select" aria-label=".form-select example">
                     {% for x in names_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -100,7 +127,7 @@
                   <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <select name="ticker" id="ticker" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
+                  <select name="ticker" id="ticker" class="form-select" aria-label=".form-select example">
                     {% for x in stock_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -113,7 +140,7 @@
                   <label id="quantity-label" for="quantity">Enter Quantity </label>
                 </div>
                 <div class="rightTab">
-                  <input type="number" name="quantity" id="quantity" class="input-field" step="1" min=0 placeholder="40" required>
+                  <input type="number" name="quantity" id="quantity" class="form-control" step="1" min=0 placeholder="40" required>
                 </div>
               </div>
         
@@ -122,7 +149,7 @@
                   <label id="price-label" for="price">Enter the Price in $AU </label>
                 </div>
                 <div class="rightTab">
-                  <input type="number" step="0.001" name="price" id="price" class="input-field" min=0 placeholder="50.25" required>
+                  <input type="number" step="0.001" name="price" id="price" class="form-control" min=0 placeholder="50.25" required>
                 </div>
               </div>
               
@@ -141,8 +168,8 @@
                   <label id="name-label" for="name">Enter Client Name </label>
                 </div>
                 <div class="rightTab">
-                  <select name="name" id="name" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
-                    {% for x in names_list %}
+                  <select name="name" id="name" class="form-select" aria-label=".form-select example">
+                    {% for x in portfolio_names %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
                 </select>
@@ -154,7 +181,7 @@
                   <label id="ticker-label" for="ticker">Enter Stock Ticker </label>
                 </div>
                 <div class="rightTab">
-                  <select name="ticker" id="ticker" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example>
+                  <select name="ticker" id="ticker" class="form-select" aria-label=".form-select example">
                     {% for x in stock_list %}
                     <option value="{{x}}">{{x}}</option>
                     {% endfor %}
@@ -169,16 +196,21 @@
         </div>
 
 
-        <div class="col-xs-10 col-sm-10 col-md-10 col-l-10 col-xl-10">
-          <div id="hori">
+        <div class="col-xs-7 col-sm-7 col-md-7 col-l-7 col-xl-7">
+          <div id="bar_chart">
           </div>
         </div>
 
-      </div>
+        <div class="col-xs-3 col-sm-3 col-md-3 col-l-3 col-xl-3">
+          <div id="pie_chart">
+          </div>
+        </div>
+
+      </div><!-- end of row -->
 
       <div class="row">
         <div class="col-xs-12  col-md-9">
-          <div id="stock_history">
+          <div id="myDiv">
           </div>
         </div>
       </div>
@@ -189,6 +221,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+	  <script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <script src="{{ url_for('static', filename='logic.js') }}"></script>
   </body>

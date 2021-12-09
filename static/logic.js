@@ -2,7 +2,7 @@
 // Get the portfolio data
 d3.json("/json_portfolios").then(function(data){
     // console.log("Portfolio Data")
-    console.log(data)
+    // console.log(data)
 
     // Create a list of names from the portfolio
     names_list = []
@@ -36,21 +36,115 @@ d3.json("/json_portfolios").then(function(data){
     //     console.log(`stock ${data["Bill"][i]["ticker"]} is ${portfolio_stock_percentage}% of the amount of stock of Bill's portfolio`);
     // }
 
-    total = 0
-    for (let stock in data["Bill"]){
-        total += data["Bill"][stock]["current_value"]
+
+    let totals_dict = {}; // A dictionary of the total assets managed by each client
+    let total_assets_managed = 0;
+    names_list.forEach(client => {
+        // Reset this for each client
+        total_portfolio_value = 0;
+        // Total Assets Managed
+        data[client].forEach(stock_purchased =>{
+            total_portfolio_value += stock_purchased["current_value"]
+            total_assets_managed += stock_purchased["current_value"]
+        });
+        totals_dict[client] = total_portfolio_value;
+    }); 
+
+    var totals_dict_keys = Object.keys(totals_dict);
+    var totals_dict_values = Object.values(totals_dict);
+    
+    var filtered_keys = totals_dict_keys
+    var filtered_values = totals_dict_values
+    
+
+    // CREATE THE ORIGINAL CHARTS
+
+    // Create a horizontal barchart
+    var bardata = [{
+        type: 'bar',
+        x: filtered_values,
+        y: filtered_keys,
+        orientation: 'h'
+      }];
+    Plotly.newPlot('bar_chart', bardata);
+
+    // Create a pie chart
+    var piedata = [{
+            type: 'pie',
+            values: totals_dict_values,
+            labels: totals_dict_keys,
+          }];
+    var layout = {
+            height: 400,
+            width: 500
+        };
+    Plotly.newPlot('pie_chart', piedata, layout);
+
+    // FILTER THE CHARTS
+    var client_select = d3.select('#portfolio_filter');
+    client_select.on("change", onSelectChange);
+
+    function onSelectChange(){
+        var value = this.value;
+        if (value != "reset"){
+            // filter the values
+            filtered_keys = [value]
+            filtered_values = [totals_dict[value]]
+            createCharts(filtered_keys,filtered_values)
+        }
+        else{
+            // reset the values
+            filtered_keys = totals_dict_keys
+            filtered_values = totals_dict_values
+            createCharts(filtered_keys,filtered_values)
+        }
     }
-    console.log(total)
+    function createCharts (k,v){
+        // Create a horizontal bar chart
+        var bardata = [{
+            type: 'bar',
+            x: v,
+            y: k,
+            orientation: 'h'
+          }];
+        Plotly.newPlot('bar_chart', bardata);
+        
+        // Create a pie chart
+        var piedata = [{
+            type: 'pie',
+            values: v,
+            labels: k,
+        }];
+        var layout = {
+            height: 400,
+            width: 500
+        };
+    Plotly.newPlot('pie_chart', piedata, layout);
+    };
+
+
+    // Create our number formatter.
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'AUD',
+    });
+    total_assets_managed_formatted = formatter.format(total_assets_managed);
+    d3.select("#total_assets").html(total_assets_managed_formatted);
+
+
+    // total = 0
+    // for (let stock in data["Bill"]){
+    //     total += data["Bill"][stock]["current_value"]
+    // }
+    // console.log(total)
 
     //Calculate portfolio percentages for Bill
-    for (let i in data["Bill"]){
-        portfolio_value_percentage = (data["Bill"][i]["current_value"]/total)*100
-        console.log(`stock ${data["Bill"][i]["ticker"]} is ${portfolio_value_percentage}% of the value of Bill's portfolio`);
-    }
+    // for (let i in data["Bill"]){
+    //     portfolio_value_percentage = (data["Bill"][i]["current_value"]/total)*100
+    //     console.log(`stock ${data["Bill"][i]["ticker"]} is ${portfolio_value_percentage}% of the value of Bill's portfolio`);
+    // }
 
-
-
-
+    
 });
 
 // Get the stock history data
@@ -58,11 +152,11 @@ d3.json("/json_stock_history").then(function(data){
     // console.log("Stock History Data")
     // console.log(data)
     // Create a date list
-    date_list = []
-    for (let date in data[0]["information"]){
-        date_list.push(date)
-    }
-    console.log(date_list);
+    // date_list = []
+    // for (let date in data[0]["information"]){
+    //     date_list.push(date)
+    // }
+    // console.log(date_list);
 
     // Find the CBA.AX stock history
     // console.log((data[1]['stock']))
