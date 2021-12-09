@@ -39,16 +39,91 @@ d3.json("/json_portfolios").then(function(data){
 
     let totals_dict = {}; // A dictionary of the total assets managed by each client
     let total_assets_managed = 0;
+    let stock_names = []
+
+    // Get the unique names of all the stock in everyone's portfolio
     names_list.forEach(client => {
         // Reset this for each client
-        total_portfolio_value = 0;
+        // total_portfolio_value = 0;
         // Total Assets Managed
         data[client].forEach(stock_purchased =>{
-            total_portfolio_value += stock_purchased["current_value"]
-            total_assets_managed += stock_purchased["current_value"]
+            // console.log(stock_purchased["ticker"])
+            if (stock_names.includes(stock_purchased["ticker"])){
+
+            }
+            else{
+                stock_names.push(stock_purchased["ticker"])
+            }
+            // total_portfolio_value += stock_purchased["current_value"]
+            // total_assets_managed += stock_purchased["current_value"]
         });
-        totals_dict[client] = total_portfolio_value;
-    }); 
+        // totals_dict[client] = total_portfolio_value;
+    });
+
+    // Get all the current values of every stock managed
+
+    // Initalize portfolio dictionary
+    portfolio_stock_dictionary = {}
+    for(i in stock_names){
+        portfolio_stock_dictionary[stock_names[i]] = 0;
+    }
+
+    stock_list= []
+    names_list.forEach(element1 => {
+        data[element1].forEach(values1 => {
+            stock_list.push(values1.ticker)
+        })
+    });
+    // console.log(stock_list)
+    // create an array for all the current_values
+    current_value_list = []
+    names_list.forEach(element2 => {
+        data[element2].forEach(values2 => {
+            current_value_list.push(values2.current_value)
+        })
+    });
+    // console.log(current_value_list)
+
+    var ticker_current_value = stock_list.map(function (value, index){
+        return [value, current_value_list[index]]
+     });
+
+     for (Object.key in portfolio_stock_dictionary){
+         let total = 0;
+         for(i in ticker_current_value){
+             if(Object.key = ticker_current_value[i][0]){
+                 total += ticker_current_value[i][1]
+                portfolio_stock_dictionary[Object.key] = total;
+             }
+         }
+     }
+     console.log(portfolio_stock_dictionary)
+
+
+
+    // names_list.forEach(client => {
+    //     // Reset this for each client
+    //     // total_portfolio_value = 0;
+    //     // Total Assets Managed
+    //     data[client].forEach(stock_purchased =>{
+    //         // console.log(stock_purchased["ticker"])
+    //         if (stock_names.includes(stock_purchased["ticker"])){
+
+    //         }
+    //         else{
+    //             stock_names.push(stock_purchased["ticker"])
+    //         }
+    //         // total_portfolio_value += stock_purchased["current_value"]
+    //         // total_assets_managed += stock_purchased["current_value"]
+    //     });
+    //     // totals_dict[client] = total_portfolio_value;
+    // });
+
+
+    
+    
+
+    // console.log(stock_names);
 
     var totals_dict_keys = Object.keys(totals_dict);
     var totals_dict_values = Object.values(totals_dict);
