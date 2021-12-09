@@ -99,7 +99,11 @@ d3.json("/json_portfolios").then(function(data){
      }
      console.log(portfolio_stock_dictionary)
 
-
+     var totals_dict_keys1 = Object.keys(portfolio_stock_dictionary);
+     var totals_dict_values1 = Object.values(portfolio_stock_dictionary);
+     
+     var filtered_keys1 = totals_dict_keys1
+     var filtered_values1 = totals_dict_values1
 
     // names_list.forEach(client => {
     //     // Reset this for each client
@@ -146,15 +150,19 @@ d3.json("/json_portfolios").then(function(data){
     // Create a pie chart
     var piedata = [{
             type: 'pie',
-            values: totals_dict_values,
-            labels: totals_dict_keys,
+            values: totals_dict_values1,
+            labels: totals_dict_keys1,
+            // textinfo: "label+percent",
+            textposition: "inside",
+            automargin: true,
+            name: 'Overall Stock Portfolio'
           }];
     var layout = {
             height: 400,
             width: 500
         };
     Plotly.newPlot('pie_chart', piedata, layout);
-
+   
     // FILTER THE CHARTS
     var client_select = d3.select('#portfolio_filter');
     client_select.on("change", onSelectChange);
@@ -184,17 +192,7 @@ d3.json("/json_portfolios").then(function(data){
           }];
         Plotly.newPlot('bar_chart', bardata);
         
-        // Create a pie chart
-        var piedata = [{
-            type: 'pie',
-            values: v,
-            labels: k,
-        }];
-        var layout = {
-            height: 400,
-            width: 500
-        };
-    Plotly.newPlot('pie_chart', piedata, layout);
+       
     };
 
 
