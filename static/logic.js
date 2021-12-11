@@ -1,16 +1,17 @@
 // Get the portfolio data
 d3.json("/json_portfolios").then(function(data){
 
-    // Create a list of names from the portfolio
+    // A list of names from the portfolio data
     names_list = []
     for (key in data){
         names_list.push(key)
     }
 
-    let totals_dict = {}; // A dictionary of the total assets managed by each client
+    // FIND THE TOTAL CURRENT VALUE OF ALL THE ASSETS MANAGED
+    // AND THE TOTAL CURRENT VALUE OF EACH CLIENT'S PORTFOLIO
+    let portfolio_totals_dict = {}; // A dictionary of the total assets managed by each client
     let total_assets_managed = 0;
     let stock_names = []
-
     // Get the unique names of all the stock in everyone's portfolio
     names_list.forEach(client => {
         // Reset this for each client
@@ -26,118 +27,88 @@ d3.json("/json_portfolios").then(function(data){
             total_portfolio_value += stock_purchased["current_value"]
             total_assets_managed += stock_purchased["current_value"]
         });
-        totals_dict[client] = total_portfolio_value;
+        portfolio_totals_dict[client] = total_portfolio_value;
     });
+
+    // Display the total assets managed
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'AUD',
+    });
+    total_assets_managed_formatted = formatter.format(total_assets_managed);
+    d3.select("#total_assets").html(total_assets_managed_formatted);
 
     // Get all the current values of every stock managed
     // Initalize portfolio dictionary
-    portfolio_stock_dictionary = {}
-    for(i in stock_names){
-        portfolio_stock_dictionary[stock_names[i]] = 0;
+    stock_total_current_values = {}
+    for(stock in stock_names){
+        stock_total_current_values[stock_names[stock]] = 0;
     }
-
+    // create an array of all the stock names
     stock_list= []
-    names_list.forEach(element1 => {
-        data[element1].forEach(values1 => {
-            stock_list.push(values1.ticker)
+    names_list.forEach(client => {
+        data[client].forEach(stock => {
+            stock_list.push(stock.ticker)
         })
     });
     // create an array for all the current_values
     current_value_list = []
-    names_list.forEach(element2 => {
-        data[element2].forEach(values2 => {
-            current_value_list.push(values2.current_value)
+    names_list.forEach(client => {
+        data[client].forEach(value => {
+            current_value_list.push(value.current_value)
         })
     });
 
     var ticker_current_value = stock_list.map(function (value, index){
         return [value, current_value_list[index]]
      });
-     for (Object.key in portfolio_stock_dictionary){
+
+     for (Object.key in stock_total_current_values){
          let total = 0;
          for(i in ticker_current_value){
              if(Object.key = ticker_current_value[i][0]){
                  total += ticker_current_value[i][1]
-                portfolio_stock_dictionary[Object.key] = total;
+                 stock_total_current_values[Object.key] = total;
              }
          }
      }
 
-
-    var totals_dict_keys = Object.keys(totals_dict);
-    var totals_dict_values = Object.values(totals_dict);
-
-// Create items array
-var sorted_totals_array = Object.keys(totals_dict).map(function(key) {
-    return [key, totals_dict[key]];
+// CREATE THE VARIABLES FOR THE SORTED HORIZONTAL BARCHART
+var sorted_portfolio_totals_array = Object.keys(portfolio_totals_dict).map(function(key) {
+    return [key, portfolio_totals_dict[key]];
   });
   
-  // Sort the array based on the second element
-  sorted_totals_array.sort(function(first, second) {
+// Sort the array based on the second element
+  sorted_portfolio_totals_array.sort(function(first, second) {
     return first[1] - second[1];
   });
 
-var sorted_totals_dict_keys = []
-var sorted_totals_dict_values = [];
+var sorted_portfolio_totals_dict_keys = []
+var sorted_portfolio_totals_dict_values = [];
 
 
-for (let i = 0; i < sorted_totals_array.length; i++) {
-    sorted_totals_dict_keys.push(sorted_totals_array[i][0])
-    sorted_totals_dict_values.push(sorted_totals_array[i][1])
+for (let i = 0; i < sorted_portfolio_totals_array.length; i++) {
+    sorted_portfolio_totals_dict_keys.push(sorted_portfolio_totals_array[i][0])
+    sorted_portfolio_totals_dict_values.push(sorted_portfolio_totals_array[i][1])
 } 
 
-  var filtered_keys = sorted_totals_dict_keys
-  var filtered_values = sorted_totals_dict_values
+var filtered_portfolio_keys = sorted_portfolio_totals_dict_keys
+var filtered_portfolio_values = sorted_portfolio_totals_dict_values
 
+// CREATE THE VARIABLES FOR THE STOCK TOTAL CURRENT VALUE PIE CHART
+var stock_totals_dict_keys = Object.keys(stock_total_current_values);
+var stock_totals_dict_values = Object.values(stock_total_current_values);
 
-// PIE CHART for stock percentage
-    // Initalize portfolio dictionary
-    portfolio_stock_dictionary1 = {}
-    for(i in stock_names){
-        portfolio_stock_dictionary1[stock_names[i]] = 0;
-    }
-
-    stock_list1= []
-    names_list.forEach(element1 => {
-        data[element1].forEach(values1 => {
-            stock_list1.push(values1.ticker)
-        })
-    });
-    // create an array for all the current_values
-    current_value_list = []
-    names_list.forEach(element2 => {
-        data[element2].forEach(values2 => {
-            current_value_list.push(values2.current_value)
-        })
-    });
-
-    var ticker_current_value = stock_list.map(function (value, index){
-        return [value, current_value_list[index]]
-     });
-
-     for (Object.key in portfolio_stock_dictionary1){
-         let total = 0;
-         for(i in ticker_current_value){
-             if(Object.key = ticker_current_value[i][0]){
-                 total += ticker_current_value[i][1]
-                portfolio_stock_dictionary1[Object.key] = total;
-             }
-         }
-     }
-     console.log(portfolio_stock_dictionary1);
-
-     var totals_dict_keys1 = Object.keys(portfolio_stock_dictionary1);
-     var totals_dict_values1 = Object.values(portfolio_stock_dictionary1);
-
-
+var filtered_stock_totals_keys = stock_totals_dict_keys
+var filtered_stock_totals_values = stock_totals_dict_values
 
 
 // CREATE THE ORIGINAL CHARTS
     // Create a horizontal barchart
     var bardata = [{
         type: 'bar',
-        x: filtered_values,
-        y: filtered_keys,
+        x: filtered_portfolio_values,
+        y: filtered_portfolio_keys,
         orientation: 'h'
       }];
     Plotly.newPlot('bar_chart', bardata);
@@ -145,8 +116,8 @@ for (let i = 0; i < sorted_totals_array.length; i++) {
     // Create a pie chart
     var piedata = [{
             type: 'pie',
-            values: totals_dict_values1,
-            labels: totals_dict_keys1,
+            labels: filtered_stock_totals_keys,
+            values: filtered_stock_totals_values
           }];
     var layout = {
             height: 400,
@@ -158,27 +129,32 @@ for (let i = 0; i < sorted_totals_array.length; i++) {
     var client_select = d3.select('#portfolio_filter');
     client_select.on("change", onSelectChange);
 
+    // A function to filter the charts
     function onSelectChange(){
         var value = this.value;
         if (value != "reset"){
             // filter the values
-            filtered_keys = [value]
-            filtered_values = [totals_dict[value]]
-            createCharts(filtered_keys,filtered_values)
+            bar_keys = [value]
+            bar_values = [portfolio_totals_dict[value]]
+            pie_keys = filtered_stock_totals_keys
+            pie_values = filtered_stock_totals_values
+            createCharts(bar_keys, bar_values, pie_keys, pie_values)
         }
         else{
             // reset the values
-            filtered_keys = totals_dict_keys
-            filtered_values = totals_dict_values
-            createCharts(filtered_keys,filtered_values)
+            bar_values = portfolio_totals_dict_keys
+            bar_values = portfolio_totals_dict_values
+            pie_keys = filtered_stock_totals_keys
+            pie_values = filtered_stock_totals_values
+            createCharts(bar_keys,bar_values, pie_keys, pie_values)
         }
     }
-    function createCharts (k,v){
+    function createCharts (bar_k, bar_v, pie_k, pie_v){
         // Create a horizontal bar chart
         var bardata = [{
             type: 'bar',
-            x: v,
-            y: k,
+            x: bar_v,
+            y: bar_k,
             orientation: 'h'
           }];
         Plotly.newPlot('bar_chart', bardata);
@@ -186,8 +162,8 @@ for (let i = 0; i < sorted_totals_array.length; i++) {
         // Create a pie chart
         var piedata = [{
             type: 'pie',
-            values: v,
-            labels: k,
+            values: pie_v,
+            labels: pie_k,
         }];
         var layout = {
             height: 400,
@@ -195,17 +171,6 @@ for (let i = 0; i < sorted_totals_array.length; i++) {
         };
     Plotly.newPlot('pie_chart', piedata, layout);
     };
-
-
-    // Create our number formatter.
-    var formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'AUD',
-    });
-    total_assets_managed_formatted = formatter.format(total_assets_managed);
-    d3.select("#total_assets").html(total_assets_managed_formatted);
-
-
 
 });
 
