@@ -9,13 +9,15 @@ d3.json("/json_portfolios").then(function(data){
 
     // FIND THE TOTAL CURRENT VALUE OF ALL THE ASSETS MANAGED
     // AND THE TOTAL CURRENT VALUE OF EACH CLIENT'S PORTFOLIO
-    let portfolio_totals_dict = {}; // A dictionary of the total assets managed by each client
+    let portfolio_totals_dict = {}; // A dictionary of the total current value of all the assets managed by each client
+    let portfolio_purchase_totals_dict = {};
     let total_assets_managed = 0;
     let stock_names = []
     // Get the unique names of all the stock in everyone's portfolio
     names_list.forEach(client => {
         // Reset this for each client
-        total_portfolio_value = 0;
+        total_portfolio_current_value = 0;
+        total_portfolio_purchase_value = 0;
         //Total Assets Managed
         data[client].forEach(stock_purchased =>{
             if (stock_names.includes(stock_purchased["ticker"])){
@@ -24,10 +26,13 @@ d3.json("/json_portfolios").then(function(data){
             else{
                 stock_names.push(stock_purchased["ticker"])
             }
-            total_portfolio_value += stock_purchased["current_value"]
+            total_portfolio_current_value += stock_purchased["current_value"]
+            total_portfolio_purchase_value += stock_purchased["purchase_value"]
             total_assets_managed += stock_purchased["current_value"]
         });
-        portfolio_totals_dict[client] = total_portfolio_value;
+        portfolio_totals_dict[client] = total_portfolio_current_value;
+        portfolio_purchase_totals_dict[client] = total_portfolio_purchase_value;
+
     });
 
     // Display the total assets managed
@@ -134,16 +139,16 @@ var filtered_stock_totals_values = stock_totals_dict_values
         var value = this.value;
         if (value != "reset"){
             // filter the values
-            bar_keys = [value]
-            bar_values = [portfolio_totals_dict[value]]
+            bar_keys = ["Total Current Value","Total Purchase Value"]
+            bar_values = [portfolio_totals_dict[value], portfolio_purchase_totals_dict[value]]
             pie_keys = filtered_stock_totals_keys
             pie_values = filtered_stock_totals_values
             createCharts(bar_keys, bar_values, pie_keys, pie_values)
         }
         else{
             // reset the values
-            bar_values = portfolio_totals_dict_keys
-            bar_values = portfolio_totals_dict_values
+            bar_keys = sorted_portfolio_totals_dict_keys
+            bar_values = sorted_portfolio_totals_dict_values
             pie_keys = filtered_stock_totals_keys
             pie_values = filtered_stock_totals_values
             createCharts(bar_keys,bar_values, pie_keys, pie_values)

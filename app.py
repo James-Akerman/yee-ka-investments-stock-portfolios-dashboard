@@ -80,7 +80,7 @@ def json_stock_history():
 def json_portfolios():
     # Load the data
     portfolios = {}
-    portfolio_names = dbPortfolio.collection_names()
+    portfolio_names = dbPortfolio.list_collection_names()
     for name in portfolio_names:
         individual_portfolio = []
         for document in dbPortfolio[name].find():
