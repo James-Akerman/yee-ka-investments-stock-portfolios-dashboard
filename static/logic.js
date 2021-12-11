@@ -1,41 +1,11 @@
-
 // Get the portfolio data
 d3.json("/json_portfolios").then(function(data){
-    // console.log("Portfolio Data")
-    // console.log(data)
 
     // Create a list of names from the portfolio
     names_list = []
     for (key in data){
         names_list.push(key)
     }
-
-    // Show all information
-    // names_list.forEach(element => {
-        // console.log(`ticker: ${data[element][0]["ticker"]}`)
-        // console.log(`change_in_value: ${data[element][0]["change_in_value"]}`)
-        // console.log(`current_price: ${data[element][0]["current_price"]}`)
-        // console.log(`current_value ${data[element][0]["current_value"]}`)
-        // console.log(`owner: ${data[element][0]["owner"]}`)
-        // console.log(`purchase_price: ${data[element][0]["purchase_price"]}`)
-        // console.log(`purchase_value: ${data[element][0]["purchase_value"]}`)
-        // console.log(`quantity: ${data[element][0]["quantity"]}`)
-        // console.log("\n")
-    // }); 
-
-    // Calculate the total amount of stocks that Bill has
-    // total = 0
-    // for (let stock in data["Bill"]){
-    //     total += data["Bill"][stock]["quantity"]
-    // }
-    // console.log(total)
-
-    // //Calculate portfolio percentages for Bill
-    // for (let i in data["Bill"]){
-    //     portfolio_stock_percentage = (data["Bill"][i]["quantity"]/total)*100
-    //     console.log(`stock ${data["Bill"][i]["ticker"]} is ${portfolio_stock_percentage}% of the amount of stock of Bill's portfolio`);
-    // }
-
 
     let totals_dict = {}; // A dictionary of the total assets managed by each client
     let total_assets_managed = 0;
@@ -44,24 +14,22 @@ d3.json("/json_portfolios").then(function(data){
     // Get the unique names of all the stock in everyone's portfolio
     names_list.forEach(client => {
         // Reset this for each client
-        // total_portfolio_value = 0;
-        // Total Assets Managed
+        total_portfolio_value = 0;
+        //Total Assets Managed
         data[client].forEach(stock_purchased =>{
-            // console.log(stock_purchased["ticker"])
             if (stock_names.includes(stock_purchased["ticker"])){
 
             }
             else{
                 stock_names.push(stock_purchased["ticker"])
             }
-            // total_portfolio_value += stock_purchased["current_value"]
-            // total_assets_managed += stock_purchased["current_value"]
+            total_portfolio_value += stock_purchased["current_value"]
+            total_assets_managed += stock_purchased["current_value"]
         });
-        // totals_dict[client] = total_portfolio_value;
+        totals_dict[client] = total_portfolio_value;
     });
 
     // Get all the current values of every stock managed
-
     // Initalize portfolio dictionary
     portfolio_stock_dictionary = {}
     for(i in stock_names){
@@ -74,7 +42,6 @@ d3.json("/json_portfolios").then(function(data){
             stock_list.push(values1.ticker)
         })
     });
-    // console.log(stock_list)
     // create an array for all the current_values
     current_value_list = []
     names_list.forEach(element2 => {
@@ -82,12 +49,10 @@ d3.json("/json_portfolios").then(function(data){
             current_value_list.push(values2.current_value)
         })
     });
-    // console.log(current_value_list)
 
     var ticker_current_value = stock_list.map(function (value, index){
         return [value, current_value_list[index]]
      });
-
      for (Object.key in portfolio_stock_dictionary){
          let total = 0;
          for(i in ticker_current_value){
@@ -97,43 +62,77 @@ d3.json("/json_portfolios").then(function(data){
              }
          }
      }
-     console.log(portfolio_stock_dictionary)
 
-
-
-    // names_list.forEach(client => {
-    //     // Reset this for each client
-    //     // total_portfolio_value = 0;
-    //     // Total Assets Managed
-    //     data[client].forEach(stock_purchased =>{
-    //         // console.log(stock_purchased["ticker"])
-    //         if (stock_names.includes(stock_purchased["ticker"])){
-
-    //         }
-    //         else{
-    //             stock_names.push(stock_purchased["ticker"])
-    //         }
-    //         // total_portfolio_value += stock_purchased["current_value"]
-    //         // total_assets_managed += stock_purchased["current_value"]
-    //     });
-    //     // totals_dict[client] = total_portfolio_value;
-    // });
-
-
-    
-    
-
-    // console.log(stock_names);
 
     var totals_dict_keys = Object.keys(totals_dict);
     var totals_dict_values = Object.values(totals_dict);
-    
-    var filtered_keys = totals_dict_keys
-    var filtered_values = totals_dict_values
-    
 
-    // CREATE THE ORIGINAL CHARTS
+// Create items array
+var sorted_totals_array = Object.keys(totals_dict).map(function(key) {
+    return [key, totals_dict[key]];
+  });
+  
+  // Sort the array based on the second element
+  sorted_totals_array.sort(function(first, second) {
+    return first[1] - second[1];
+  });
 
+var sorted_totals_dict_keys = []
+var sorted_totals_dict_values = [];
+
+
+for (let i = 0; i < sorted_totals_array.length; i++) {
+    sorted_totals_dict_keys.push(sorted_totals_array[i][0])
+    sorted_totals_dict_values.push(sorted_totals_array[i][1])
+} 
+
+  var filtered_keys = sorted_totals_dict_keys
+  var filtered_values = sorted_totals_dict_values
+
+
+// PIE CHART for stock percentage
+    // Initalize portfolio dictionary
+    portfolio_stock_dictionary1 = {}
+    for(i in stock_names){
+        portfolio_stock_dictionary1[stock_names[i]] = 0;
+    }
+
+    stock_list1= []
+    names_list.forEach(element1 => {
+        data[element1].forEach(values1 => {
+            stock_list1.push(values1.ticker)
+        })
+    });
+    // create an array for all the current_values
+    current_value_list = []
+    names_list.forEach(element2 => {
+        data[element2].forEach(values2 => {
+            current_value_list.push(values2.current_value)
+        })
+    });
+
+    var ticker_current_value = stock_list.map(function (value, index){
+        return [value, current_value_list[index]]
+     });
+
+     for (Object.key in portfolio_stock_dictionary1){
+         let total = 0;
+         for(i in ticker_current_value){
+             if(Object.key = ticker_current_value[i][0]){
+                 total += ticker_current_value[i][1]
+                portfolio_stock_dictionary1[Object.key] = total;
+             }
+         }
+     }
+     console.log(portfolio_stock_dictionary1);
+
+     var totals_dict_keys1 = Object.keys(portfolio_stock_dictionary1);
+     var totals_dict_values1 = Object.values(portfolio_stock_dictionary1);
+
+
+
+
+// CREATE THE ORIGINAL CHARTS
     // Create a horizontal barchart
     var bardata = [{
         type: 'bar',
@@ -146,8 +145,8 @@ d3.json("/json_portfolios").then(function(data){
     // Create a pie chart
     var piedata = [{
             type: 'pie',
-            values: totals_dict_values,
-            labels: totals_dict_keys,
+            values: totals_dict_values1,
+            labels: totals_dict_keys1,
           }];
     var layout = {
             height: 400,
@@ -207,40 +206,63 @@ d3.json("/json_portfolios").then(function(data){
     d3.select("#total_assets").html(total_assets_managed_formatted);
 
 
-    // total = 0
-    // for (let stock in data["Bill"]){
-    //     total += data["Bill"][stock]["current_value"]
-    // }
-    // console.log(total)
 
-    //Calculate portfolio percentages for Bill
-    // for (let i in data["Bill"]){
-    //     portfolio_value_percentage = (data["Bill"][i]["current_value"]/total)*100
-    //     console.log(`stock ${data["Bill"][i]["ticker"]} is ${portfolio_value_percentage}% of the value of Bill's portfolio`);
-    // }
-
-    
 });
 
 // Get the stock history data
 d3.json("/json_stock_history").then(function(data){
-    // console.log("Stock History Data")
-    // console.log(data)
-    // Create a date list
-    // date_list = []
-    // for (let date in data[0]["information"]){
-    //     date_list.push(date)
-    // }
-    // console.log(date_list);
 
-    // Find the CBA.AX stock history
-    // console.log((data[1]['stock']))
-    // date_list.forEach(date => {
-    //     console.log(`Open: ${data[1]['information'][date]["Open"]}`)
-    //     console.log(`High: ${data[1]['information'][date]["High"]}`)
-    //     console.log(`Close*: ${data[1]['information'][date]["Close*"]}`)
-    //     console.log(`Adj. close**: ${data[1]['information'][date]["Adj. close**"]}`)
-    //     console.log(`Volume: ${data[1]['information'][date]["Volume"]}`)
-    // });
+    // ---- GET THE LAST 5 DAYS OF CLOSING DATA FOR EACH STOCK AND DISPLAY THEM IN A LINE GRAPH ----
+    // Get a list of all the dates in the stock history
+    date_list = []
+    for (let date in data[0]["information"]){
+        date_list.push(date)
+    }
+    // Get the last five days
+    let last_week = date_list.slice(0,5)
+    
+    // Create an area of all the stock tickers
+    stock_list = []
+    for (let i = 0; i < data.length; i++) {
+        stock_list.push(data[i]['stock'])
+      } 
+
+    // Create an array containing the last five days of closing prices for each stock
+    array1 = []
+    for (let i = 0; i < data.length; i++) {
+        last_week.forEach(date => {
+            array1.push([data[i]["stock"],date, data[i]['information'][date]["Close*"]])
+        })
+    }
+    // Create an object from this array with the stock names as the keys and the 
+    // values being the dates and closing prices as two seperate arrays
+    last_five_days_dict = {}
+    for (let i = 0; i < stock_list.length; i++) {
+        last_five_days_dict[stock_list[i]] = [[],[]]
+    }
+
+    for (stock in last_five_days_dict) {
+        for (let i=0; i<array1.length; i++){
+            if(array1[i][0] == stock){
+                last_five_days_dict[stock][0].push(array1[i][1])
+                last_five_days_dict[stock][1].push(array1[i][2])
+            }
+        }
+    }
+
+    // Create a chart from each stock object and add it to an array of chart data
+     var trace = ""
+     var chart_data = []
+    for (stock in last_five_days_dict) {
+        trace = {
+            x: last_five_days_dict[stock][0],
+            y: last_five_days_dict[stock][1],
+            type: 'line',
+            name: stock
+          };
+        chart_data.push(trace)
+    }
+    // Create the chart
+    Plotly.newPlot('myDiv', chart_data);
 
   });
