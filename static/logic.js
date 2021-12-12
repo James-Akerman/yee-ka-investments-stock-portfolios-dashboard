@@ -85,6 +85,33 @@ var filtered_portfolio_values = Object.values(portfolio_totals_dict).reverse()
 var stock_totals_dict_keys = Object.keys(stock_total_current_values);
 var stock_totals_dict_values = Object.values(stock_total_current_values);
 
+var pie_Google_chart_data = [["Stocks", "Current Values"]]
+for (let i = 0; i < stock_totals_dict_values.length; i++){
+    pie_Google_chart_data.push([stock_totals_dict_keys[i],stock_totals_dict_values[i]])
+}
+// Create the Google Pie Chart
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+function drawChart() {
+var data = google.visualization.arrayToDataTable(pie_Google_chart_data);
+var options = {
+    titleTextStyle: {
+        color: "black", 
+        fontName: "Arial",
+        fontSize: 20,
+        bold: false, 
+        italic: false
+    },
+title:"All Client Portfolio Stocks in $AU and % of Total Current Value Managed",
+  height: 800,
+  width: 800
+}
+var chart = new google.visualization.PieChart(document.getElementById('myChart'));
+  chart.draw(data, options);
+};
+
+
+
 // Show the individual stock values for the porfolio of each client
 var current_portfolios_values_dict = {};
 names_list.forEach(client => {
@@ -183,7 +210,15 @@ options: {
             pie_values = current_portfolios_values_dict[value][1]
             line_stocks = current_portfolios_values_dict[value][0]
             colors = ['orange', 'green',]
-            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart)
+            // Filter the pie data
+            var filtered_pie_Google_chart_data = [["Stocks", "Current Values"]]
+            for (let i = 0; i < current_portfolios_values_dict[value][0].length; i++){
+                filtered_pie_Google_chart_data.push([current_portfolios_values_dict[value][0][i],current_portfolios_values_dict[value][1][i]])
+            }
+            pie_data = filtered_pie_Google_chart_data
+            console.log(filtered_pie_Google_chart_data)
+
+            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart, pie_data)
         }
         else{
             // reset the values
@@ -193,10 +228,11 @@ options: {
             pie_values = stock_totals_dict_values
             line_stocks = "default"
             colors = ['blue']
-            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart)
+            pie_data = pie_Google_chart_data
+            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart, pie_data)
         }
     }
-    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v, client_name, colors, oldbar){
+    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v, client_name, colors, oldbar, pie_data){
         // Remove the old bar chart
         oldbar.destroy();
         // Create a horizontal bar chart
@@ -210,7 +246,6 @@ options: {
             }],
           },
           options: {
-            responsive: true,
             indexAxis: 'y',
             scales: {
                 x: {
@@ -264,6 +299,27 @@ options: {
             width: 550
             };
         Plotly.newPlot('pie_chart', piedata, pie_layout);
+
+    // Create the Google Pie Chart
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+function drawChart() {
+var data = google.visualization.arrayToDataTable(pie_data);
+var options = {
+        titleTextStyle: {
+            color: "black", 
+            fontName: "Arial",
+            fontSize: 20,
+            bold: false, 
+            italic: false
+        },
+  title:"Stocks owned by " + client_name + "in $AU " + "and % of Total Current Portfolio Value"
+  ,height: 800
+  ,width: 800
+};
+var chart = new google.visualization.PieChart(document.getElementById('myChart'));
+  chart.draw(data, options);
+};
 
     createLineChart(line_v, client_name)
 
@@ -341,7 +397,16 @@ options: {
                             family: 'Arial',
                             size: 20,
                             color: "black",
-                          }
+                          },
+                        },
+                    hoverlabel: {
+                            bgcolor: 'white',
+                            bordercolor: 'darkgrey',
+                            font: {
+                              color: 'black',
+                              family: 'Arial',
+                              size: 16,
+                        }
                     },
                     height: 900,
                     width: 1400,
