@@ -2,3 +2,12 @@
     margin-bottom: 0.25rem; 
     margin-top: 0.25rem;
 }
+
+#bar_chart {
+    width: 100%; 
+    min-height: 450px;
+  }
+
+.row {
+    margin:0 !important;
+}
