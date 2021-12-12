@@ -78,26 +78,8 @@ d3.json("/json_portfolios").then(function(data){
      }
 
 // CREATE THE VARIABLES FOR THE SORTED HORIZONTAL BARCHART
-var sorted_portfolio_totals_array = Object.keys(portfolio_totals_dict).map(function(key) {
-    return [key, portfolio_totals_dict[key]];
-  });
-  
-// Sort the array based on the second element
-  sorted_portfolio_totals_array.sort(function(first, second) {
-    return first[1] - second[1];
-  });
-
-var sorted_portfolio_totals_dict_keys = []
-var sorted_portfolio_totals_dict_values = [];
-
-
-for (let i = 0; i < sorted_portfolio_totals_array.length; i++) {
-    sorted_portfolio_totals_dict_keys.push(sorted_portfolio_totals_array[i][0])
-    sorted_portfolio_totals_dict_values.push(sorted_portfolio_totals_array[i][1])
-} 
-
-var filtered_portfolio_keys = sorted_portfolio_totals_dict_keys
-var filtered_portfolio_values = sorted_portfolio_totals_dict_values
+var filtered_portfolio_keys = Object.keys(portfolio_totals_dict).reverse()
+var filtered_portfolio_values = Object.values(portfolio_totals_dict).reverse()
 
 // CREATE THE VARIABLES FOR THE STOCK TOTAL CURRENT VALUE PIE CHART
 var stock_totals_dict_keys = Object.keys(stock_total_current_values);
@@ -121,10 +103,10 @@ names_list.forEach(client => {
 var hor_bar_chart = new Chart("bar_chart", {
   type: "bar",
   data: {
-  labels: filtered_portfolio_keys.reverse(),
+  labels: filtered_portfolio_keys,
   datasets: [{
     backgroundColor: "blue",
-    data: filtered_portfolio_values.reverse()
+    data: filtered_portfolio_values
   }],
 },
 options: {
@@ -205,8 +187,8 @@ options: {
         }
         else{
             // reset the values
-            bar_keys = sorted_portfolio_totals_dict_keys
-            bar_values = sorted_portfolio_totals_dict_values
+            bar_keys = filtered_portfolio_keys
+            bar_values = filtered_portfolio_values
             pie_keys = stock_totals_dict_keys
             pie_values = stock_totals_dict_values
             line_stocks = "default"
@@ -342,21 +324,34 @@ options: {
                         x: last_five_days_dict[stock][0].reverse(),
                         y: last_five_days_dict[stock][1].reverse(),
                         type: 'line',
-                        name: stock
+                        name: stock,
+                        line: {
+                            width: 4
+                        },
+                        marker: {
+                            size: 10
+                        }
                       };
                     chart_data.push(trace)
                 }
                 var line_layout = {
-                    title: chart_title,
-                    height: 800,
-                    width: 1200,
+                    title: {
+                        text: chart_title,
+                        font: {
+                            family: 'Arial',
+                            size: 20,
+                            color: "black",
+                          }
+                    },
+                    height: 900,
+                    width: 1400,
                     xaxis: {
                         title: {
-                          text: 'LAST WEEK',
+                          text: 'Last Week',
                           font: {
                             family: 'Arial',
                             size: 20,
-                            color: "black"
+                            color: "black",
                           }
                         },
                         tickfont: {
@@ -367,7 +362,7 @@ options: {
                       },
                     yaxis: {
                         title: {
-                          text: 'STOCK PRICE $AU',
+                          text: 'Stock Price $AU',
                           font: {
                             family: 'Arial',
                             size: 20,
