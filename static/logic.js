@@ -124,7 +124,42 @@ names_list.forEach(client => {
         y: filtered_portfolio_keys,
         orientation: 'h'
       }];
-    Plotly.newPlot('bar_chart', bardata);
+    var bar_layout = {
+        title: "Total Current Value of" + "<br>" + "All Client Portfolios in $AU",
+        height: 550,
+        width: 800,
+        xaxis: {
+            title: {
+              text: 'TOTAL PORTFOLIO VALUE',
+              font: {
+                family: 'Arial',
+                size: 20,
+                color: "black"
+              }
+            },
+            tickfont: {
+                family: 'Arial',
+                size: 16,
+                color: 'black'
+              },
+          },
+        yaxis: {
+            title: {
+              text: 'CLIENTS',
+              font: {
+                family: 'Arial',
+                size: 20,
+                color: "black",
+              }
+            },
+            tickfont: {
+                family: 'Arial',
+                size: 16,
+                color: 'black'
+              },
+          },
+    };
+    Plotly.newPlot('bar_chart', bardata, bar_layout);
 
     // Create a pie chart
     var piedata = [{
@@ -132,11 +167,13 @@ names_list.forEach(client => {
             labels: stock_totals_dict_keys,
             values: stock_totals_dict_values
           }];
-    var layout = {
-            height: 400,
-            width: 500
+    var pie_layout = {
+        title: "All Client Portfolio Stocks in $AU and" + "<br>" 
+        + "% of Total Current Value Managed",
+        height: 550,
+        width: 550
         };
-    Plotly.newPlot('pie_chart', piedata, layout);
+    Plotly.newPlot('pie_chart', piedata, pie_layout);
 
     // Create Line chart
     createLineChart("default")
@@ -155,7 +192,7 @@ names_list.forEach(client => {
             pie_keys = current_portfolios_values_dict[value][0]
             pie_values = current_portfolios_values_dict[value][1]
             line_stocks = current_portfolios_values_dict[value][0]
-            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks)
+            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value)
         }
         else{
             // reset the values
@@ -164,18 +201,36 @@ names_list.forEach(client => {
             pie_keys = stock_totals_dict_keys
             pie_values = stock_totals_dict_values
             line_stocks = "default"
-            createCharts(bar_keys,bar_values, pie_keys, pie_values, line_stocks)
+            createCharts(bar_keys,bar_values, pie_keys, pie_values, line_stocks, value)
         }
     }
-    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v){
+    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v, client_name){
         // Create a horizontal bar chart
         var bardata = [{
             type: 'bar',
             x: bar_v,
             y: bar_k,
-            orientation: 'h'
+            orientation: 'h',
+            marker: {
+                color: ['green','blue']
+              }
           }];
-        Plotly.newPlot('bar_chart', bardata);
+          var bar_layout = {
+            title: "Total Purchase and Current Value" + "<br>" + "of " + client_name + "'s Portfolio in $AU",
+            height: 550,
+            width: 800,
+            xaxis: {
+                tickfont: {
+                    family: 'Arial',
+                    size: 16,
+                    color: 'black'
+                  },
+              },
+            yaxis: {
+                showticklabels: false
+              },
+        };
+        Plotly.newPlot('bar_chart', bardata, bar_layout);
         
         // Create a pie chart
         var piedata = [{
@@ -183,17 +238,18 @@ names_list.forEach(client => {
             values: pie_v,
             labels: pie_k,
         }];
-        var layout = {
-            height: 400,
-            width: 500
-        };
-    Plotly.newPlot('pie_chart', piedata, layout);
+        var pie_layout = {
+            title: "Stocks owned by " + client_name + "in $AU" + "<br>" + "and % of Total Current Portfolio Value",
+            height: 550,
+            width: 550
+            };
+        Plotly.newPlot('pie_chart', piedata, pie_layout);
 
-    createLineChart(line_v)
+    createLineChart(line_v, client_name)
 
     };
 
-    function createLineChart(stocks){
+    function createLineChart(stocks, client_name){
         d3.json("/json_stock_history").then(function(data){
                 // ---- GET THE LAST 5 DAYS OF CLOSING DATA FOR EACH STOCK AND DISPLAY THEM IN A LINE GRAPH ----
                 // Get a list of all the dates in the stock history
@@ -202,16 +258,19 @@ names_list.forEach(client => {
                     date_list.push(date)
                 }
                 // Get the last five days
-                let last_week = date_list.slice(0,5)
+                let last_week = date_list.slice(0,5);
+                let chart_title = "";
                 
                 // Create an area of all the stock tickers
                 if (stocks != "default"){
                     stock_list = stocks
+                    chart_title = "Closing Price of all stocks in " + client_name + "'s portfolio from the last week"
                 }else{
                     stock_list = []
                     for (let i = 0; i < data.length; i++) {
                         stock_list.push(data[i]['stock'])
                       }
+                      chart_title = "Closing Price of all stocks managed from the last week"
                 }
                 
                 // Create an array containing the last five days of closing prices for each stock
@@ -242,15 +301,50 @@ names_list.forEach(client => {
                  var chart_data = []
                 for (stock in last_five_days_dict) {
                     trace = {
-                        x: last_five_days_dict[stock][0],
-                        y: last_five_days_dict[stock][1],
+                        x: last_five_days_dict[stock][0].reverse(),
+                        y: last_five_days_dict[stock][1].reverse(),
                         type: 'line',
                         name: stock
                       };
                     chart_data.push(trace)
                 }
+                var line_layout = {
+                    title: chart_title,
+                    height: 800,
+                    width: 1200,
+                    xaxis: {
+                        title: {
+                          text: 'LAST WEEK',
+                          font: {
+                            family: 'Arial',
+                            size: 20,
+                            color: "black"
+                          }
+                        },
+                        tickfont: {
+                            family: 'Arial',
+                            size: 16,
+                            color: 'black'
+                          },
+                      },
+                    yaxis: {
+                        title: {
+                          text: 'STOCK PRICE $AU',
+                          font: {
+                            family: 'Arial',
+                            size: 20,
+                            color: "black",
+                          }
+                        },
+                        tickfont: {
+                            family: 'Arial',
+                            size: 16,
+                            color: 'black'
+                          },
+                      },
+                };
                 // Create the chart
-                Plotly.newPlot('myDiv', chart_data);
+                Plotly.newPlot('line_chart', chart_data, line_layout);
         }); // end of json_stock_history
     }
 
