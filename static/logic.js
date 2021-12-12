@@ -116,8 +116,6 @@ names_list.forEach(client => {
     current_portfolios_values_dict[client] = [stocks, current_values]
 });
 
-// console.log(current_portfolios_values_dict);
-
 // CREATE THE ORIGINAL CHARTS
     // Create a horizontal barchart
     var bardata = [{
@@ -140,6 +138,9 @@ names_list.forEach(client => {
         };
     Plotly.newPlot('pie_chart', piedata, layout);
 
+    // Create Line chart
+    createLineChart("default")
+
     // FILTER THE CHARTS
     var client_select = d3.select('#portfolio_filter');
     client_select.on("change", onSelectChange);
@@ -153,7 +154,8 @@ names_list.forEach(client => {
             bar_values = [portfolio_totals_dict[value], portfolio_purchase_totals_dict[value]]
             pie_keys = current_portfolios_values_dict[value][0]
             pie_values = current_portfolios_values_dict[value][1]
-            createCharts(bar_keys, bar_values, pie_keys, pie_values)
+            line_stocks = current_portfolios_values_dict[value][0]
+            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks)
         }
         else{
             // reset the values
@@ -161,10 +163,11 @@ names_list.forEach(client => {
             bar_values = sorted_portfolio_totals_dict_values
             pie_keys = stock_totals_dict_keys
             pie_values = stock_totals_dict_values
-            createCharts(bar_keys,bar_values, pie_keys, pie_values)
+            line_stocks = "default"
+            createCharts(bar_keys,bar_values, pie_keys, pie_values, line_stocks)
         }
     }
-    function createCharts (bar_k, bar_v, pie_k, pie_v){
+    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v){
         // Create a horizontal bar chart
         var bardata = [{
             type: 'bar',
@@ -185,64 +188,70 @@ names_list.forEach(client => {
             width: 500
         };
     Plotly.newPlot('pie_chart', piedata, layout);
+
+    createLineChart(line_v)
+
     };
 
-});
-
-// Get the stock history data
-d3.json("/json_stock_history").then(function(data){
-
-    // ---- GET THE LAST 5 DAYS OF CLOSING DATA FOR EACH STOCK AND DISPLAY THEM IN A LINE GRAPH ----
-    // Get a list of all the dates in the stock history
-    date_list = []
-    for (let date in data[0]["information"]){
-        date_list.push(date)
+    function createLineChart(stocks){
+        d3.json("/json_stock_history").then(function(data){
+                // ---- GET THE LAST 5 DAYS OF CLOSING DATA FOR EACH STOCK AND DISPLAY THEM IN A LINE GRAPH ----
+                // Get a list of all the dates in the stock history
+                date_list = []
+                for (let date in data[0]["information"]){
+                    date_list.push(date)
+                }
+                // Get the last five days
+                let last_week = date_list.slice(0,5)
+                
+                // Create an area of all the stock tickers
+                if (stocks != "default"){
+                    stock_list = stocks
+                }else{
+                    stock_list = []
+                    for (let i = 0; i < data.length; i++) {
+                        stock_list.push(data[i]['stock'])
+                      }
+                }
+                
+                // Create an array containing the last five days of closing prices for each stock
+                array1 = []
+                for (let i = 0; i < data.length; i++) {
+                    last_week.forEach(date => {
+                        array1.push([data[i]["stock"],date, data[i]['information'][date]["Close*"]])
+                    })
+                }
+                // Create an object from this array with the stock names as the keys and the 
+                // values being the dates and closing prices as two seperate arrays
+                last_five_days_dict = {}
+                for (let i = 0; i < stock_list.length; i++) {
+                    last_five_days_dict[stock_list[i]] = [[],[]]
+                }
+            
+                for (stock in last_five_days_dict) {
+                    for (let i=0; i<array1.length; i++){
+                        if(array1[i][0] == stock){
+                            last_five_days_dict[stock][0].push(array1[i][1])
+                            last_five_days_dict[stock][1].push(array1[i][2])
+                        }
+                    }
+                }      
+            
+                // Create a chart from each stock object and add it to an array of chart data
+                 var trace = ""
+                 var chart_data = []
+                for (stock in last_five_days_dict) {
+                    trace = {
+                        x: last_five_days_dict[stock][0],
+                        y: last_five_days_dict[stock][1],
+                        type: 'line',
+                        name: stock
+                      };
+                    chart_data.push(trace)
+                }
+                // Create the chart
+                Plotly.newPlot('myDiv', chart_data);
+        }); // end of json_stock_history
     }
-    // Get the last five days
-    let last_week = date_list.slice(0,5)
-    
-    // Create an area of all the stock tickers
-    stock_list = []
-    for (let i = 0; i < data.length; i++) {
-        stock_list.push(data[i]['stock'])
-      } 
 
-    // Create an array containing the last five days of closing prices for each stock
-    array1 = []
-    for (let i = 0; i < data.length; i++) {
-        last_week.forEach(date => {
-            array1.push([data[i]["stock"],date, data[i]['information'][date]["Close*"]])
-        })
-    }
-    // Create an object from this array with the stock names as the keys and the 
-    // values being the dates and closing prices as two seperate arrays
-    last_five_days_dict = {}
-    for (let i = 0; i < stock_list.length; i++) {
-        last_five_days_dict[stock_list[i]] = [[],[]]
-    }
-
-    for (stock in last_five_days_dict) {
-        for (let i=0; i<array1.length; i++){
-            if(array1[i][0] == stock){
-                last_five_days_dict[stock][0].push(array1[i][1])
-                last_five_days_dict[stock][1].push(array1[i][2])
-            }
-        }
-    }
-
-    // Create a chart from each stock object and add it to an array of chart data
-     var trace = ""
-     var chart_data = []
-    for (stock in last_five_days_dict) {
-        trace = {
-            x: last_five_days_dict[stock][0],
-            y: last_five_days_dict[stock][1],
-            type: 'line',
-            name: stock
-          };
-        chart_data.push(trace)
-    }
-    // Create the chart
-    Plotly.newPlot('myDiv', chart_data);
-
-  });
+}); // end of json_portfolios
