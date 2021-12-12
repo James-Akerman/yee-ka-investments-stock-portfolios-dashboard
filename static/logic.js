@@ -129,6 +129,30 @@ var hor_bar_chart = new Chart("bar_chart", {
 },
 options: {
     indexAxis: 'y',
+    scales: {
+        x: {
+            ticks: {
+                // Include a dollar sign in the ticks
+                callback: function(value, index, values) {
+                    return '$' + value;
+                },
+                font:{
+                    size: 16,
+                    family: 'Arial',
+                    weight: 1,
+                    },
+            }
+        },
+        y: {
+            ticks: {
+                font:{
+                    size: 16,
+                    family: 'Arial',
+                    weight: 1,
+                    },
+            }
+        }
+    },
     plugins: {
         legend: { display: false },
         title: {
@@ -171,12 +195,12 @@ options: {
         var value = this.value;
         if (value != "reset"){
             // filter the values
-            bar_keys = ["Total Current Value","Total Purchase Value"]
+            bar_keys = ["Total Purchase Value", "Total Current Value"]
             bar_values = [portfolio_totals_dict[value], portfolio_purchase_totals_dict[value]]
             pie_keys = current_portfolios_values_dict[value][0]
             pie_values = current_portfolios_values_dict[value][1]
             line_stocks = current_portfolios_values_dict[value][0]
-            colors = ['green','blue']
+            colors = ['orange', 'green',]
             createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart)
         }
         else{
@@ -204,8 +228,33 @@ options: {
             }],
           },
           options: {
-              indexAxis: 'y',
-              plugins: {
+            responsive: true,
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    ticks: {
+                        // Include a dollar sign in the ticks
+                        callback: function(value, index, values) {
+                            return '$' + value;
+                        },
+                        font:{
+                            size: 16,
+                            family: 'Arial',
+                            weight: 1,
+                            },
+                    }
+                },
+                y: {
+                    ticks: {
+                        font:{
+                            size: 16,
+                            family: 'Arial',
+                            weight: 1,
+                            },
+                    }
+                }
+            },
+            plugins: {
                   legend: { display: false },
                   title: {
                       display: true,
