@@ -117,50 +117,33 @@ names_list.forEach(client => {
 });
 
 // CREATE THE ORIGINAL CHARTS
-    // Create a horizontal barchart
-    var bardata = [{
-        type: 'bar',
-        x: filtered_portfolio_values,
-        y: filtered_portfolio_keys,
-        orientation: 'h'
-      }];
-    var bar_layout = {
-        title: "Total Current Value of" + "<br>" + "All Client Portfolios in $AU",
-        height: 550,
-        width: 800,
-        xaxis: {
-            title: {
-              text: 'TOTAL PORTFOLIO VALUE',
-              font: {
-                family: 'Arial',
+// Create a horizontal barchart with Chart.js
+var hor_bar_chart = new Chart("bar_chart", {
+  type: "bar",
+  data: {
+  labels: filtered_portfolio_keys.reverse(),
+  datasets: [{
+    backgroundColor: "blue",
+    data: filtered_portfolio_values.reverse()
+  }],
+},
+options: {
+    indexAxis: 'y',
+    plugins: {
+        legend: { display: false },
+        title: {
+            display: true,
+            text: ["Total Current Value of", "All Client Portfolios in $AU"],
+            font:{
                 size: 20,
-                color: "black"
-              }
-            },
-            tickfont: {
                 family: 'Arial',
-                size: 16,
-                color: 'black'
-              },
-          },
-        yaxis: {
-            title: {
-              text: 'CLIENTS',
-              font: {
-                family: 'Arial',
-                size: 20,
-                color: "black",
-              }
-            },
-            tickfont: {
-                family: 'Arial',
-                size: 16,
-                color: 'black'
-              },
-          },
-    };
-    Plotly.newPlot('bar_chart', bardata, bar_layout);
-
+                weight: 1,
+                },
+            color: "black"
+                },
+            }
+        }
+    });
     // Create a pie chart
     var piedata = [{
             type: 'pie',
@@ -184,6 +167,7 @@ names_list.forEach(client => {
 
     // A function to filter the charts
     function onSelectChange(){
+        var colors = ""
         var value = this.value;
         if (value != "reset"){
             // filter the values
@@ -192,7 +176,8 @@ names_list.forEach(client => {
             pie_keys = current_portfolios_values_dict[value][0]
             pie_values = current_portfolios_values_dict[value][1]
             line_stocks = current_portfolios_values_dict[value][0]
-            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value)
+            colors = ['green','blue']
+            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart)
         }
         else{
             // reset the values
@@ -201,37 +186,41 @@ names_list.forEach(client => {
             pie_keys = stock_totals_dict_keys
             pie_values = stock_totals_dict_values
             line_stocks = "default"
-            createCharts(bar_keys,bar_values, pie_keys, pie_values, line_stocks, value)
+            colors = ['blue']
+            createCharts(bar_keys, bar_values, pie_keys, pie_values, line_stocks, value, colors, hor_bar_chart)
         }
     }
-    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v, client_name){
+    function createCharts (bar_k, bar_v, pie_k, pie_v, line_v, client_name, colors, oldbar){
+        // Remove the old bar chart
+        oldbar.destroy();
         // Create a horizontal bar chart
-        var bardata = [{
-            type: 'bar',
-            x: bar_v,
-            y: bar_k,
-            orientation: 'h',
-            marker: {
-                color: ['green','blue']
+        hor_bar_chart = new Chart("bar_chart", {
+            type: "bar",
+            data: {
+            labels: bar_k,
+            datasets: [{
+              backgroundColor: colors,
+              data: bar_v
+            }],
+          },
+          options: {
+              indexAxis: 'y',
+              plugins: {
+                  legend: { display: false },
+                  title: {
+                      display: true,
+                      text: ["Total Purchase and Current Value of ", client_name +"'s Portfolio in $AU"],
+                      font:{
+                          size: 20,
+                          family: 'Arial',
+                          weight: 1,
+                          },
+                      color: "black"
+                      },
+                  }
               }
-          }];
-          var bar_layout = {
-            title: "Total Purchase and Current Value" + "<br>" + "of " + client_name + "'s Portfolio in $AU",
-            height: 550,
-            width: 800,
-            xaxis: {
-                tickfont: {
-                    family: 'Arial',
-                    size: 16,
-                    color: 'black'
-                  },
-              },
-            yaxis: {
-                showticklabels: false
-              },
-        };
-        Plotly.newPlot('bar_chart', bardata, bar_layout);
-        
+          });
+
         // Create a pie chart
         var piedata = [{
             type: 'pie',
