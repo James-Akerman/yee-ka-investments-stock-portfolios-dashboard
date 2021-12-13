@@ -15,29 +15,29 @@ d3.json("/json_portfolios").then(function(data){
     let stock_names = []
     // Get the unique names of all the stock in everyone's portfolio
     names_list.forEach(client => {
-        // Reset this for each client
-        total_portfolio_current_value = 0;
-        total_portfolio_purchase_value = 0;
-        //Total Assets Managed
-        data[client].forEach(stock_purchased =>{
-            if (stock_names.includes(stock_purchased["ticker"])){
+    // Reset this for each client
+    total_portfolio_current_value = 0;
+    total_portfolio_purchase_value = 0;
+    //Total Assets Managed
+    data[client].forEach(stock_purchased =>{
+        if (stock_names.includes(stock_purchased["ticker"])){
 
-            }
-            else{
-                stock_names.push(stock_purchased["ticker"])
-            }
-            total_portfolio_current_value += stock_purchased["current_value"]
-            total_portfolio_purchase_value += stock_purchased["purchase_value"]
-            total_assets_managed += stock_purchased["current_value"]
-        });
+        }
+        else{
+            stock_names.push(stock_purchased["ticker"])
+        }
+        total_portfolio_current_value += stock_purchased["current_value"]
+        total_portfolio_purchase_value += stock_purchased["purchase_value"]
+        total_assets_managed += stock_purchased["current_value"]
+    });
         portfolio_totals_dict[client] = total_portfolio_current_value;
         portfolio_purchase_totals_dict[client] = total_portfolio_purchase_value
     });
 
     // Display the total assets managed
     var formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'AUD',
+            style: 'currency',
+            currency: 'AUD',
     });
     total_assets_managed_formatted = formatter.format(total_assets_managed);
     d3.select("#total_assets").html(total_assets_managed_formatted);
@@ -77,95 +77,110 @@ d3.json("/json_portfolios").then(function(data){
          }
      }
 
-// CREATE THE VARIABLES FOR THE SORTED HORIZONTAL BARCHART
-var filtered_portfolio_keys = Object.keys(portfolio_totals_dict).reverse()
-var filtered_portfolio_values = Object.values(portfolio_totals_dict).reverse()
-
-// CREATE THE VARIABLES FOR THE STOCK TOTAL CURRENT VALUE PIE CHART
-var stock_totals_dict_keys = Object.keys(stock_total_current_values);
-var stock_totals_dict_values = Object.values(stock_total_current_values);
-
-var pie_Google_chart_data = [["Stocks", "Current Values"]]
-for (let i = 0; i < stock_totals_dict_values.length; i++){
-    pie_Google_chart_data.push([stock_totals_dict_keys[i],stock_totals_dict_values[i]])
-}
-
-// Show the individual stock values for the porfolio of each client
-var current_portfolios_values_dict = {};
-names_list.forEach(client => {
-    let stocks = []
-    let current_values = []
-    //Total Assets Managed
-    data[client].forEach(stock_purchased =>{
-        stocks.push(stock_purchased["ticker"]);
-        current_values.push(stock_purchased["current_value"])
+    // CREATE THE VARIABLES FOR THE SORTED HORIZONTAL BARCHART
+    var sorted_totals_array = Object.keys(portfolio_totals_dict).map(function(key) {
+        return [key, portfolio_totals_dict[key]];
     });
-    current_portfolios_values_dict[client] = [stocks, current_values]
-});
+    // Sort the array based on the second element
+    sorted_totals_array.sort(function(first, second) {
+        return second[1] - first[1];
+    });
+    var sorted_totals_dict_keys = []
+    var sorted_totals_dict_values = [];
+    for (let i = 0; i < sorted_totals_array.length; i++) {
+        sorted_totals_dict_keys.push(sorted_totals_array[i][0])
+        sorted_totals_dict_values.push(sorted_totals_array[i][1])
+    }
 
-// CREATE THE ORIGINAL CHARTS
-// Create a horizontal barchart with Chart.js
-var hor_bar_chart = new Chart("bar_chart", {
-  type: "bar",
-  data: {
-  labels: filtered_portfolio_keys,
-  datasets: [{
-    backgroundColor: "blue",
-    data: filtered_portfolio_values
-  }],
-},
-options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y',
-    scales: {
-        x: {
-            ticks: {
-                // Include a dollar sign in the ticks
-                callback: function(value, index, values) {
-                    return '$' + value;
-                },
+    var filtered_portfolio_keys = sorted_totals_dict_keys
+    var filtered_portfolio_values = sorted_totals_dict_values
+
+
+    // CREATE THE VARIABLES FOR THE STOCK TOTAL CURRENT VALUE PIE CHART
+    var stock_totals_dict_keys = Object.keys(stock_total_current_values);
+    var stock_totals_dict_values = Object.values(stock_total_current_values);
+
+    var pie_Google_chart_data = [["Stocks", "Current Values"]]
+    for (let i = 0; i < stock_totals_dict_values.length; i++){
+        pie_Google_chart_data.push([stock_totals_dict_keys[i],stock_totals_dict_values[i]])
+    }
+
+    // Show the individual stock values for the porfolio of each client
+    var current_portfolios_values_dict = {};
+    names_list.forEach(client => {
+        let stocks = []
+        let current_values = []
+        //Total Assets Managed
+        data[client].forEach(stock_purchased =>{
+            stocks.push(stock_purchased["ticker"]);
+            current_values.push(stock_purchased["current_value"])
+        });
+        current_portfolios_values_dict[client] = [stocks, current_values]
+    });
+
+    // CREATE THE ORIGINAL CHARTS
+    // Create a horizontal barchart with Chart.js
+    var hor_bar_chart = new Chart("bar_chart", {
+    type: "bar",
+    data: {
+    labels: filtered_portfolio_keys,
+    datasets: [{
+        backgroundColor: "blue",
+        data: filtered_portfolio_values
+     }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+            x: {
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return '$' + value;
+                    },
                 font:{
                     size: 16,
                     family: 'Arial',
                     weight: 1,
                     },
                     color: "black",
+                }
+            },
+            y: {
+                ticks: {
+                    font:{
+                        size: 16,
+                        family: 'Arial',
+                        weight: 1,
+                        },
+                    color: "black"
+                }
             }
         },
-        y: {
-            ticks: {
+        plugins: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: ["Total Current Value of", "All Client Portfolios in $AU"],
                 font:{
-                    size: 16,
+                    size: 20,
                     family: 'Arial',
                     weight: 1,
                     },
                 color: "black"
+                    },
+                }
             }
-        }
-    },
-    plugins: {
-        legend: { display: false },
-        title: {
-            display: true,
-            text: ["Total Current Value of", "All Client Portfolios in $AU"],
-            font:{
-                size: 20,
-                family: 'Arial',
-                weight: 1,
-                },
-            color: "black"
-                },
-            }
-        }
     });
     // Create a pie chart with Google Charts
     // Create the Google Pie Chart
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
     function drawChart() {
-    var data = google.visualization.arrayToDataTable(pie_Google_chart_data);
-    var options = {
+        var data = google.visualization.arrayToDataTable(pie_Google_chart_data);
+        var options = {
         'titleTextStyle': {
             'color': "black", 
             'fontName': "Arial",
@@ -197,17 +212,16 @@ options: {
         var value = this.value;
         if (value != "reset"){
             // filter the values
-            bar_keys = ["Total Purchase Value", "Total Current Value"]
+            bar_keys = ["Total Current Value", "Total Purchase Value"]
             bar_values = [portfolio_totals_dict[value], portfolio_purchase_totals_dict[value]]
             line_stocks = current_portfolios_values_dict[value][0]
-            colors = ['orange', 'green',]
+            colors = ['green', 'orange']
             // Filter the pie data
             var filtered_pie_Google_chart_data = [["Stocks", "Current Values"]]
             for (let i = 0; i < current_portfolios_values_dict[value][0].length; i++){
                 filtered_pie_Google_chart_data.push([current_portfolios_values_dict[value][0][i],current_portfolios_values_dict[value][1][i]])
             }
             pie_data = filtered_pie_Google_chart_data
-            console.log(filtered_pie_Google_chart_data)
 
             createCharts(bar_keys, bar_values, line_stocks, value, colors, hor_bar_chart, pie_data)
         }
@@ -427,7 +441,7 @@ options: {
                 // Create the chart
                 Plotly.newPlot('line_chart', chart_data, line_layout);
         }); // end of json_stock_history
-        
+
     } // enf of createLineChart function
 
 }); // end of json_portfolios
