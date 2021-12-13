@@ -236,7 +236,17 @@ d3.json("/json_portfolios").then(function(data){
             createCharts(bar_keys, bar_values, line_stocks, value, colors, hor_bar_chart, pie_data)
         }
     }
-    function createCharts (bar_k, bar_v, line_v, client_name, colors, oldbar, pie_data){
+    function createCharts(bar_k, bar_v, line_v, client_name, colors, oldbar, pie_data){
+        var bartitle = ""
+        var pietitle = ""
+       if (client_name == "reset"){
+           bartitle = ["Total Current Value of", "All Client Portfolios in $AU"]
+           pietitle = "All Client Portfolio Stocks in $AU and % of Total Current Value Managed"
+       }
+       else{
+        bartitle = ["Total Purchase and Current Value of ", client_name +"'s Portfolio in $AU"]
+        pietitle = "Stocks owned by " + client_name + " in $AU " + "and % of Total Current Portfolio Value"
+       }
         // Remove the old bar chart
         oldbar.destroy();
         // Create a horizontal bar chart
@@ -283,7 +293,7 @@ d3.json("/json_portfolios").then(function(data){
                   legend: { display: false },
                   title: {
                       display: true,
-                      text: ["Total Purchase and Current Value of ", client_name +"'s Portfolio in $AU"],
+                      text: bartitle,
                       font:{
                           size: 20,
                           family: 'Arial',
@@ -308,7 +318,7 @@ d3.json("/json_portfolios").then(function(data){
                 'bold': false, 
                 'italic': false
             },
-            'title':"Stocks owned by " + client_name + "in $AU " + "and % of Total Current Portfolio Value",
+            'title': pietitle,
             'height': 500,
             'width': 500,
             'chartArea': {'width': '100%', 'height': '80%'},
