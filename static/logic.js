@@ -48,6 +48,7 @@ d3.json("/json_portfolios").then(function(data){
     for(stock in stock_names){
         stock_total_current_values[stock_names[stock]] = 0;
     };
+
     // create an array of all the stock names
     stock_list= []
     names_list.forEach(client => {
@@ -70,7 +71,7 @@ d3.json("/json_portfolios").then(function(data){
      for (Object.key in stock_total_current_values){
          let total = 0;
          for(i in ticker_current_value){
-             if(Object.key = ticker_current_value[i][0]){
+             if(Object.key == ticker_current_value[i][0]){
                  total += ticker_current_value[i][1]
                  stock_total_current_values[Object.key] = total;
              }
