@@ -343,7 +343,7 @@ d3.json("/json_portfolios").then(function(data){
                 for (let i = 0; i < data.length; i++) {
                     stock_list.push(data[i]['stock'])
                 }
-                chart_title = "Closing Price of all stocks managed from the last week"
+                chart_title = "Closing Price of all available stocks from the last week"
                 }
                 
             // Create an array containing the last five days of closing prices for each stock

@@ -31,10 +31,10 @@
         <div class="col-xs-2 col-sm-2 col-md-2 col-l-2 col-xl-2">
           <div class="rightTab">
             <select name="portfolio_filter" id="portfolio_filter" class="form-control form-control-md">
+              <option value="reset">All Clients</option>
               {% for x in portfolio_names %}
               <option value="{{x}}">{{x}}</option>
               {% endfor %}
-              <option value="reset">All Clients</option>
           </select>
           </div>
         </div>
