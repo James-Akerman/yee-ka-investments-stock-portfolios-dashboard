@@ -284,6 +284,8 @@ def stock_history(ticker):
     df_new['Volume'] = df_new['Volume'].str.replace(',','')
     #convert strings to floats
     df_new[['Open', 'High', 'Low', 'Close*','Adj. close**','Volume']] = df_new[['Open', 'High', 'Low', 'Close*', 'Adj. close**','Volume']].astype(dtype='float64')
+    # Remove Punctuation from column names
+    df_new = df_new.rename(columns={'Adj. close**': 'Adj close**'})
     # Get the average 'Open', 'High', 'Low', 'Close', 'Adj Close', and 'Volume' of each month for each year
     df_new = df_new.set_index('Date')
 

@@ -47,25 +47,25 @@ d3.json("/json_portfolios").then(function(data){
     stock_total_current_values = {}
     for(stock in stock_names){
         stock_total_current_values[stock_names[stock]] = 0;
-    }
+    };
     // create an array of all the stock names
     stock_list= []
     names_list.forEach(client => {
         data[client].forEach(stock => {
             stock_list.push(stock.ticker)
-        })
+        });
     });
     // create an array for all the current_values
     current_value_list = []
     names_list.forEach(client => {
         data[client].forEach(value => {
             current_value_list.push(value.current_value)
-        })
+        });
     });
 
     var ticker_current_value = stock_list.map(function (value, index){
         return [value, current_value_list[index]]
-     });
+    });
 
      for (Object.key in stock_total_current_values){
          let total = 0;
@@ -161,27 +161,27 @@ options: {
     });
     // Create a pie chart with Google Charts
     // Create the Google Pie Chart
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-function drawChart() {
-var data = google.visualization.arrayToDataTable(pie_Google_chart_data);
-var options = {
-    titleTextStyle: {
-        color: "black", 
-        fontName: "Arial",
-        fontSize: 20,
-        bold: false, 
-        italic: false
-    },
-'title':"All Client Portfolio Stocks in $AU and % of Total Current Value Managed",
-  'height': 500,
-  'width': 500,
-  'chartArea': {'width': '100%', 'height': '80%'},
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+    var data = google.visualization.arrayToDataTable(pie_Google_chart_data);
+    var options = {
+        'titleTextStyle': {
+            'color': "black", 
+            'fontName': "Arial",
+            'fontSize': 20,
+            'bold': false, 
+            'italic': false
+        },
+        'title':"All Client Portfolio Stocks in $AU and % of Total Current Value Managed",
+        'height': 500,
+        'width': 500,
+        'chartArea': {'width': '100%', 'height': '80%'},
                'legend': {'position': 'bottom'}
-}
-var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
-  chart.draw(data, options);
-};
+    }
+    var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
+    chart.draw(data, options);
+    };
     
 
     // Create Line chart
@@ -280,28 +280,28 @@ var chart = new google.visualization.PieChart(document.getElementById('pie_chart
               }
           });
 
-        // Create a pie chart
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-function drawChart() {
-var data = google.visualization.arrayToDataTable(pie_data);
-var options = {
-        titleTextStyle: {
-            color: "black", 
-            fontName: "Arial",
-            fontSize: 20,
-            bold: false, 
-            italic: false
-        },
-  'title':"Stocks owned by " + client_name + "in $AU " + "and % of Total Current Portfolio Value",
-  'height': 500,
-  'width': 500,
-  'chartArea': {'width': '100%', 'height': '80%'},
-               'legend': {'position': 'bottom'}
-};
-var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
-  chart.draw(data, options);
-};
+    // Create a pie chart
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable(pie_data);
+        var options = {
+            'titleTextStyle': {
+                'color': "black", 
+                'fontName': "Arial",
+                'fontSize': 20,
+                'bold': false, 
+                'italic': false
+            },
+            'title':"Stocks owned by " + client_name + "in $AU " + "and % of Total Current Portfolio Value",
+            'height': 500,
+            'width': 500,
+            'chartArea': {'width': '100%', 'height': '80%'},
+            'legend': {'position': 'bottom'}
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
+        chart.draw(data, options);
+    };
 
     createLineChart(line_v, client_name)
 
@@ -309,56 +309,56 @@ var chart = new google.visualization.PieChart(document.getElementById('pie_chart
 
     function createLineChart(stocks, client_name){
         d3.json("/json_stock_history").then(function(data){
-                // ---- GET THE LAST 5 DAYS OF CLOSING DATA FOR EACH STOCK AND DISPLAY THEM IN A LINE GRAPH ----
-                // Get a list of all the dates in the stock history
-                date_list = []
-                for (let date in data[0]["information"]){
+            // ---- GET THE LAST 5 DAYS OF CLOSING DATA FOR EACH STOCK AND DISPLAY THEM IN A LINE GRAPH ----
+            // Get a list of all the dates in the stock history
+            date_list = []
+            for (let date in data[0]["information"]){
                     date_list.push(date)
-                }
-                // Get the last five days
-                let last_week = date_list.slice(0,5);
-                let chart_title = "";
+            }
+            // Get the last five days
+            let last_week = date_list.slice(0,5);
+            let chart_title = "";
                 
-                // Create an area of all the stock tickers
-                if (stocks != "default"){
-                    stock_list = stocks
-                    chart_title = "Closing Price of all stocks in " + client_name + "'s portfolio from the last week"
-                }else{
-                    stock_list = []
-                    for (let i = 0; i < data.length; i++) {
-                        stock_list.push(data[i]['stock'])
-                      }
-                      chart_title = "Closing Price of all stocks managed from the last week"
-                }
-                
-                // Create an array containing the last five days of closing prices for each stock
-                array1 = []
+            // Create an area of all the stock tickers
+            if (stocks != "default"){
+                stock_list = stocks
+                chart_title = "Closing Price of all stocks in " + client_name + "'s portfolio from the last week"
+            }else{
+                stock_list = []
                 for (let i = 0; i < data.length; i++) {
-                    last_week.forEach(date => {
-                        array1.push([data[i]["stock"],date, data[i]['information'][date]["Close*"]])
-                    })
+                    stock_list.push(data[i]['stock'])
                 }
-                // Create an object from this array with the stock names as the keys and the 
-                // values being the dates and closing prices as two seperate arrays
-                last_five_days_dict = {}
-                for (let i = 0; i < stock_list.length; i++) {
-                    last_five_days_dict[stock_list[i]] = [[],[]]
+                chart_title = "Closing Price of all stocks managed from the last week"
                 }
+                
+            // Create an array containing the last five days of closing prices for each stock
+            array1 = []
+            for (let i = 0; i < data.length; i++) {
+                last_week.forEach(date => {
+                    array1.push([data[i]["stock"],date, data[i]['information'][date]["Close*"]])
+                })
+            }
+            // Create an object from this array with the stock names as the keys and the 
+            // values being the dates and closing prices as two seperate arrays
+            last_five_days_dict = {}
+            for (let i = 0; i < stock_list.length; i++) {
+                last_five_days_dict[stock_list[i]] = [[],[]]
+            }
             
-                for (stock in last_five_days_dict) {
-                    for (let i=0; i<array1.length; i++){
-                        if(array1[i][0] == stock){
-                            last_five_days_dict[stock][0].push(array1[i][1])
-                            last_five_days_dict[stock][1].push(array1[i][2])
-                        }
+            for (stock in last_five_days_dict) {
+                for (let i=0; i<array1.length; i++){
+                    if(array1[i][0] == stock){
+                        last_five_days_dict[stock][0].push(array1[i][1])
+                        last_five_days_dict[stock][1].push(array1[i][2])
                     }
-                }      
+                }
+            }      
             
-                // Create a chart from each stock object and add it to an array of chart data
-                 var trace = ""
-                 var chart_data = []
-                for (stock in last_five_days_dict) {
-                    trace = {
+            // Create a chart from each stock object and add it to an array of chart data
+            var trace = ""
+            var chart_data = []
+            for (stock in last_five_days_dict) {
+                trace = {
                         x: last_five_days_dict[stock][0].reverse(),
                         y: last_five_days_dict[stock][1].reverse(),
                         type: 'line',
@@ -374,7 +374,7 @@ var chart = new google.visualization.PieChart(document.getElementById('pie_chart
                 }
                 var line_layout = {
                    
-                    title: {
+                title: {
                         text: chart_title,
                         font: {
                             family: 'Arial',
@@ -382,18 +382,18 @@ var chart = new google.visualization.PieChart(document.getElementById('pie_chart
                             color: "black",
                           },
                         },
-                    hoverlabel: {
+                hoverlabel: {
                             bgcolor: 'white',
                             bordercolor: 'darkgrey',
                             font: {
                               color: 'black',
                               family: 'Arial',
                               size: 14,
-                        }
-                    },
-                    height: 700,
-                    width: 1400,
-                    xaxis: {
+                    }
+                },
+                height: 700,
+                width: 1400,
+                xaxis: {
                         title: {
                           text: 'Last Week',
                           font: {
@@ -402,13 +402,13 @@ var chart = new google.visualization.PieChart(document.getElementById('pie_chart
                             color: "black",
                           }
                         },
-                        tickfont: {
+                tickfont: {
                             family: 'Arial',
                             size: 16,
                             color: 'black'
                           },
-                      },
-                    yaxis: {
+                },
+                yaxis: {
                         title: {
                           text: 'Stock Price $AU',
                           font: {
@@ -427,6 +427,7 @@ var chart = new google.visualization.PieChart(document.getElementById('pie_chart
                 // Create the chart
                 Plotly.newPlot('line_chart', chart_data, line_layout);
         }); // end of json_stock_history
-    }
+        
+    } // enf of createLineChart function
 
 }); // end of json_portfolios
