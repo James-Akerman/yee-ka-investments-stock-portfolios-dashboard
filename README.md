@@ -3,6 +3,7 @@ This web interactive dashboard is designed to help a fund manager to easily visu
 
 It enables a high level overview of activity across all portfolios.
 ![All Portfolios](images/all-portfolios.PNG)
+
 And within each porfolio.
 ![Individual Portfolio](images/individual-portfolio.PNG)
 
