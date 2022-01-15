@@ -43,6 +43,6 @@ It also allows for insertion, updating, and deletion of stock, portfolio, and cl
 - HTML
 
 ## How to use
-- Download the directory
-- Open Git in the directory and type ``` python app.py ```
-- Go to web address specified, usually `https://127.0.0.1:5000/`
+1) Download the directory
+2) Open Git in the directory and type ``` python app.py ```
+3) Go to web address specified, usually `https://127.0.0.1:5000/`
