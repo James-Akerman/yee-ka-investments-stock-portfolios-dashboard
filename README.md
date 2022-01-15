@@ -10,6 +10,8 @@ It enables a high level overview of activity across all portfolios including
 
 ![All Portfolios](images/all-portfolios.PNG)
 
+
+
 And within each porfolio including
 - a comparison the the total current value of a client's portfolio vs its original purchase value.
 - what percentage each stock managed contributes to the total funds managed for the client.
