@@ -1,7 +1,7 @@
 # Yee Ka Investments Stock Porfolios Dashboard
 This web interactive dashboard is designed to help a potential fund manager to review the progress of the clients’ share portfolios using the latest data scraped from yahoo fiance using a custom python [module](yahoo_finance_etl_module_2.py).
 
-![yahoo-finance}(images/stock-history.PNG)
+![yahoo-finance}(images/stock-price-history.PNG)
 
 It enables a high level overview of activity across all portfolios including
 - the total current value of all client portfolios in $AU.
